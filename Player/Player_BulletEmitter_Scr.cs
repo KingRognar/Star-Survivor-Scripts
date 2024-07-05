@@ -43,6 +43,7 @@ public class Player_BulletEmitter_Scr : MonoBehaviour
     {
         GameObject newBullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
         //newBullet.transform.RotateAround(newBullet.transform.position, Vector3.forward, Random.Range(-bulletSpreadAngle, bulletSpreadAngle));
+        newBullet.transform.localScale = Vector3.one * Player_Stats_Scr.machineGun.bulletScale;
         newBullet.transform.RotateAround(newBullet.transform.position, Vector3.forward, bulletSpreadCurAngle);
         if (spreadDirectionIsRight)
         {

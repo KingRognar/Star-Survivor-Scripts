@@ -6,6 +6,8 @@ public class Bullet_Scr : MonoBehaviour
 {
     public float bulletSpeed = 2f;
 
+    [SerializeField] private AudioClip[] hitAudioClips;
+
     void Update()
     {
         transform.position += transform.up * Time.deltaTime * bulletSpeed;
@@ -13,6 +15,25 @@ public class Bullet_Scr : MonoBehaviour
 
     private void OnBecameInvisible()
     {
+        Destroy(gameObject);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (!collision.gameObject.CompareTag("Enemy"))
+            return;
+
+
+        Vector3 collisionPoint = gameObject.GetComponent<Collider2D>().ClosestPoint(collision.transform.position);
+
+        collision.gameObject.GetComponent<Enemy_HitEffect_Scr>().SpawnParticles(collisionPoint, transform.position);
+
+        Sound_FXManager_Scr.instance.PlayRandomFXClip(hitAudioClips, transform, 1);
+
+        collision.GetComponent<Enemy_Scr>().TakeDamage(Player_Stats_Scr.machineGun.bulletDamage); // TODO: изменить в зависимости от снаряда
+
+        collision.GetComponent<Enemy_Flash_Scr>().StartFlash();
+
         Destroy(gameObject);
     }
 }

@@ -24,7 +24,7 @@ public class UI_LvlUp_UpgradeOption_Scr : MonoBehaviour, IPointerClickHandler
 
     public void UpdateVisuals()
     {
-        upgradeDescriptionText.text = string.Format(upgradeOptionSO.upgradeDesription, 0.1f);
+        upgradeDescriptionText.text = string.Format(upgradeOptionSO.upgradeDesription, upgradeOptionSO.value_1, upgradeOptionSO.value_2, upgradeOptionSO.value_3);
         upgradeNameText.text = upgradeOptionSO.upgradeName;
     }
 }

@@ -40,16 +40,23 @@ public class Enemy_Director_Scr : MonoBehaviour
                 return;
             }
 
-            if (lastTimeRateIncr <= Time.time)
+            if (Time.timeScale != 0)
             {
-                enemySpawnDelay *= 0.99f;
-                lastTimeRateIncr = Time.time + timeRateIncrDelay;
+                if (lastTimeRateIncr <= Time.time)
+                {
+                    enemySpawnDelay *= 0.99f;
+                    lastTimeRateIncr = Time.time + timeRateIncrDelay;
+                }
+
+
+                SpawnEnemy();
+
+                await Task.Delay((int)(1000 * enemySpawnDelay));
+            } else
+            {
+                await Task.Yield();
             }
 
-
-            SpawnEnemy();
-
-            await Task.Delay((int)(1000 * enemySpawnDelay));
         }
 
 

@@ -8,7 +8,7 @@ public class Player_Stats_Scr : MonoBehaviour
 
     public static ShipStats ship = new ShipStats(10, 0, 1f, 1f);
 
-    public static MachineGunStats machineGun = new MachineGunStats(0.5f, 5f, 5);
+    public static MachineGunStats machineGun = new MachineGunStats(0.5f, 5f, 5, 1f);
 
 
     //TODO: нужно определится с Base Damage и всяким таким или немного поменять систему
@@ -57,16 +57,18 @@ public class Player_Stats_Scr : MonoBehaviour
 
     public struct MachineGunStats
     {
-        public MachineGunStats(float _bulletSpawnDelay, float _bulletSpreadAngle, int _bulletDamage)
+        public MachineGunStats(float _bulletSpawnDelay, float _bulletSpreadAngle, int _bulletDamage, float _bulletScale)
         {
             bulletSpawnDelay = _bulletSpawnDelay;
             bulletSpreadAngle = _bulletSpreadAngle;
             bulletDamage = _bulletDamage;
+            bulletScale = _bulletScale;
         }
 
         public float bulletSpawnDelay;
         public float bulletSpreadAngle;
         public int bulletDamage;
+        public float bulletScale;
     }
 
 

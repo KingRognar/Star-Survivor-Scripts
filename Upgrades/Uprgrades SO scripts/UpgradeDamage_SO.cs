@@ -6,10 +6,13 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Upgrade Damage", menuName = "ScriptableObjects/Upgrade Damage", order = 1)]
 public class UpgradeDamage_SO : UpgradeOption_SO
 {
-    [SerializeField] private float damageMultiplierIncrease = 0.1f;
-
+    private float damageMultiplierIncrease;
+    private float bulletScaleIncrease;
     public override void UpgradeAction()
     {
+        damageMultiplierIncrease = value_1;
+        bulletScaleIncrease = value_2;
         Player_Stats_Scr.ship.damageMultiplier += damageMultiplierIncrease;
+        Player_Stats_Scr.machineGun.bulletScale += bulletScaleIncrease;
     }
 }

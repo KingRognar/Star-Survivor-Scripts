@@ -16,7 +16,7 @@ public class UpgradeSystem_Scr : MonoBehaviour
 
     [SerializeField] private List<UI_LvlUp_UpgradeOption_Scr> lvlUpOptions;
 
-    private List<Action> upgradesList = new List<Action>(); 
+    [SerializeField] private List<UpgradeOption_SO> upgradesList = new List<UpgradeOption_SO>(); 
 
     private void Awake()
     {
@@ -48,9 +48,11 @@ public class UpgradeSystem_Scr : MonoBehaviour
         Time.timeScale = 0;
         levelUpMenu.SetActive(true);
 
-        foreach (UI_LvlUp_UpgradeOption_Scr lvlUpOtion in lvlUpOptions)
+        foreach (UI_LvlUp_UpgradeOption_Scr lvlUpOtion in lvlUpOptions) // TODO: доделать
         {
-            lvlUpOtion.bonusNum = UnityEngine.Random.Range(0, upgradesList.Count);
+            int num = UnityEngine.Random.Range(0, upgradesList.Count);
+            lvlUpOtion.bonusNum = num;
+            lvlUpOtion.upgradeOptionSO = upgradesList[num];
             lvlUpOtion.UpdateVisuals();
         }
     }
@@ -63,17 +65,17 @@ public class UpgradeSystem_Scr : MonoBehaviour
 
     public void upgrade(int option)
     {
-        upgradesList[option]();
+        upgradesList[option].UpgradeAction();
     }
 
 
-    private void AddUpgradesToList()
+    private void AddUpgradesToList() // TODO: придумать метод для добавления ScriptableObjects
     {
-        upgradesList.Clear();
+        /*upgradesList.Clear();
         upgradesList.Add(IncreasePlayerAttackSpeed);
         upgradesList.Add(IncreasePlayerSpread);
         upgradesList.Add(IncreasePlayerHP);
-        upgradesList.Add(IncreasePlayerArmor);
+        upgradesList.Add(IncreasePlayerArmor);*/
     }
     private void IncreasePlayerSpread()
     {

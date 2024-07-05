@@ -11,6 +11,7 @@ public class Enemy_Flash_Scr : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Material shaderMaterial;
     [SerializeField] private float flashTime = 0.2f;
+    [SerializeField] private float fullOpacityDuration = 0.05f;
     [SerializeField] private float flashOpacity = 1f;
     [SerializeField] private Color flashColor = Color.white;
 
@@ -33,6 +34,7 @@ public class Enemy_Flash_Scr : MonoBehaviour
     private async Task FlashTask(CancellationToken token)
     {
         float t = 0;
+        float opacityDecreaseTime = flashTime - fullOpacityDuration;
 
         while (t < flashTime)
         {
@@ -43,7 +45,9 @@ public class Enemy_Flash_Scr : MonoBehaviour
                 return;
             }
 
-            shaderMaterial.SetFloat("_FlashOpacity", Mathf.Lerp(1, 0, (t / flashTime)));
+
+            if (t > fullOpacityDuration)
+                shaderMaterial.SetFloat("_FlashOpacity", Mathf.Lerp(1, 0, (t / opacityDecreaseTime)));
 
             t += Time.deltaTime;
             await Task.Yield();

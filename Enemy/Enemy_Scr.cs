@@ -32,7 +32,7 @@ public class Enemy_Scr : MonoBehaviour
 
         Sound_FXManager_Scr.instance.PlayRandomFXClip(hitAudioClips, transform, 1);
 
-        TakeDamage(5f);
+        TakeDamage(Player_Stats_Scr.machineGun.bulletDamage); // TODO: изменить в зависимости от снаряда
 
         gameObject.GetComponent<Enemy_Flash_Scr>().StartFlash();
 
@@ -40,9 +40,9 @@ public class Enemy_Scr : MonoBehaviour
     }
 
 
-    private void TakeDamage(float damage)
+    private void TakeDamage(int damage)
     {
-        curHealth -= 5f;
+        curHealth -= damage;
 
         if (curHealth <= 0)
             Die();

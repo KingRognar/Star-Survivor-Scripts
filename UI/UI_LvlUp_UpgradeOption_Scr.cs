@@ -6,10 +6,9 @@ using TMPro;
 
 public class UI_LvlUp_UpgradeOption_Scr : MonoBehaviour, IPointerClickHandler
 {
-    private string upgradeName;
-    private string upgradeDescription;
     public int bonusNum; // TEMP
     public float bonusAmount = 1.5f; // TEMP
+    public UpgradeOption_SO upgradeOptionSO;
 
     [SerializeField] private TMP_Text upgradeNameText;
     [SerializeField] private TMP_Text upgradeDescriptionText;
@@ -25,6 +24,7 @@ public class UI_LvlUp_UpgradeOption_Scr : MonoBehaviour, IPointerClickHandler
 
     public void UpdateVisuals()
     {
-        upgradeDescriptionText.text = bonusNum.ToString();
+        upgradeDescriptionText.text = string.Format(upgradeOptionSO.upgradeDesription, 0.1f);
+        upgradeNameText.text = upgradeOptionSO.upgradeName;
     }
 }

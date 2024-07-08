@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class Player_Stats_Scr : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class Player_Stats_Scr : MonoBehaviour
     public static ShipStats ship = new ShipStats(10, 0, 1f, 1f);
 
     public static MachineGunStats machineGun = new MachineGunStats(0.5f, 5f, 5, 1f);
+    public static CircleBotsStats circleBots = new CircleBotsStats(0.3f, 4, 3, 1f);
 
 
     //TODO: нужно определится с Base Damage и всяким таким или немного поменять систему
@@ -50,6 +52,7 @@ public class Player_Stats_Scr : MonoBehaviour
             get { return firerateMultiplier_; }
             set {  firerateMultiplier_ = value;
                 machineGun.bulletSpawnDelay = machineGun.bulletSpawnDelay * firerateMultiplier_;
+                circleBots.bulletSpawnDelay = circleBots.bulletSpawnDelay * firerateMultiplier_;
             }
         }
         private float firerateMultiplier_;
@@ -69,6 +72,23 @@ public class Player_Stats_Scr : MonoBehaviour
         public float bulletSpreadAngle;
         public int bulletDamage;
         public float bulletScale;
+    }
+    public struct CircleBotsStats
+    {
+        public CircleBotsStats(float _bulletSpawnDelay, int _bulletDamage, int _botsCount, float _botsRotationSpeed)
+        {
+            bulletSpawnDelay = _bulletSpawnDelay;
+            bulletDamage = _bulletDamage;
+            botsCount = _botsCount;
+            botsRotationSpeed = _botsRotationSpeed;
+        }
+
+        public float bulletSpawnDelay;
+        public int bulletDamage;
+        public int botsCount;
+        public float botsRotationSpeed;
+        //public Vector3 circleCenter;
+        //public bool allBotsIsFiring;
     }
 
 

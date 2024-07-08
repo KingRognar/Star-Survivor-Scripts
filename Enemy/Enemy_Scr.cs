@@ -7,7 +7,7 @@ public class Enemy_Scr : MonoBehaviour
     public float movementSpeed = 2f;
     public float maxHealth = 10f;
     private float curHealth;
-    public float expAward = 2f;
+    public int expAward = 2;
 
     private void Awake()
     {

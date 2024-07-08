@@ -7,13 +7,14 @@ public class UpgradeSystem_Scr : MonoBehaviour
 {
     public static UpgradeSystem_Scr instance;
 
-    [SerializeField] private float currentExp = 0;
-    [SerializeField] private float expForLvl = 10;
+    [SerializeField] private int currentExp = 0;
+    [SerializeField] private int expForLvl = 10;
     private float multiplierForNextLvl = 1.4f;
     private int currentLvl = 1;
 
     [SerializeField] private GameObject levelUpMenu;
 
+    [SerializeField] private UI_EXP_Bar_Scr expBarUI;
     [SerializeField] private List<UI_LvlUp_UpgradeOption_Scr> lvlUpOptions;
 
     [SerializeField] private List<UpgradeOption_SO> upgradesList = new List<UpgradeOption_SO>(); 
@@ -28,17 +29,18 @@ public class UpgradeSystem_Scr : MonoBehaviour
         AddUpgradesToList();
     }
 
-    public void AwardEXP(float expAmount)
+    public void AwardEXP(int expAmount)
     {
         currentExp += expAmount;
+        expBarUI.UpdateEXPBar(currentExp, expForLvl);
 
-        if (currentExp >= expForLvl)
+        if (currentExp >= expForLvl) // TODO: поставить луп и всякое такое, чтобы при избытке опыта можно получить несколько уровней последовательно
             LevelUp();
     }
     private void LevelUp()
     {
         currentExp -= expForLvl;
-        expForLvl *= multiplierForNextLvl;
+        expForLvl = (int)(multiplierForNextLvl*expForLvl);
         currentLvl++;
         OpenLvlUpMenu();
     }
@@ -59,6 +61,8 @@ public class UpgradeSystem_Scr : MonoBehaviour
     public void CloseLvlUpMenu()
     {
         Time.timeScale = 1;
+        expBarUI.UpdateEXPBar(currentExp, expForLvl);
+        expBarUI.UpadteLVLtext(currentLvl);
         levelUpMenu.SetActive(false);
     }
 

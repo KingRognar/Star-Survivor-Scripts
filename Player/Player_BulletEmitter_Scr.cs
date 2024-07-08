@@ -42,10 +42,10 @@ public class Player_BulletEmitter_Scr : MonoBehaviour
     void InstantiateNewBullet()
     {
         GameObject newBullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
-        //newBullet.transform.RotateAround(newBullet.transform.position, Vector3.forward, Random.Range(-bulletSpreadAngle, bulletSpreadAngle));
+        newBullet.transform.RotateAround(newBullet.transform.position, Vector3.forward, Random.Range(-Player_Stats_Scr.machineGun.bulletSpreadAngle, Player_Stats_Scr.machineGun.bulletSpreadAngle));
         newBullet.transform.localScale = Vector3.one * Player_Stats_Scr.machineGun.bulletScale;
         newBullet.transform.RotateAround(newBullet.transform.position, Vector3.forward, bulletSpreadCurAngle);
-        if (spreadDirectionIsRight)
+        /*if (spreadDirectionIsRight)
         {
             bulletSpreadCurAngle++;
             if (bulletSpreadCurAngle >= Player_Stats_Scr.machineGun.bulletSpreadAngle)
@@ -56,7 +56,7 @@ public class Player_BulletEmitter_Scr : MonoBehaviour
             bulletSpreadCurAngle--;
             if (bulletSpreadCurAngle <= -Player_Stats_Scr.machineGun.bulletSpreadAngle)
                 spreadDirectionIsRight = !spreadDirectionIsRight;
-        }
+        }*/
             
 
         bulletsSpawnList.Add(newBullet);

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Weapon_CircleBot_Scr : MonoBehaviour
 {
-    [SerializeField] private float rotationSpeed = 200f;
+    [SerializeField] private float rotationSpeed = 100f;
 
     void Update()
     {

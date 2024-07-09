@@ -26,7 +26,7 @@ public class Player_BulletEmitter_Scr : MonoBehaviour
     }
     void Update()
     {
-        if (Input.GetKey(KeyCode.Mouse0) && (lastBulletSpawnTime + Player_Stats_Scr.machineGun.bulletSpawnDelay < Time.time))
+        if (Input.GetKey(KeyCode.Mouse0) && (lastBulletSpawnTime + Player_Stats_Scr.Machinegun.bulletSpawnDelay < Time.time))
         {
             SpawnBullet();
             lastBulletSpawnTime = Time.time;
@@ -42,8 +42,8 @@ public class Player_BulletEmitter_Scr : MonoBehaviour
     void InstantiateNewBullet()
     {
         GameObject newBullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
-        newBullet.transform.RotateAround(newBullet.transform.position, Vector3.forward, Random.Range(-Player_Stats_Scr.machineGun.bulletSpreadAngle, Player_Stats_Scr.machineGun.bulletSpreadAngle));
-        newBullet.transform.localScale = Vector3.one * Player_Stats_Scr.machineGun.bulletScale;
+        newBullet.transform.RotateAround(newBullet.transform.position, Vector3.forward, Random.Range(-Player_Stats_Scr.Machinegun.bulletSpreadAngle, Player_Stats_Scr.Machinegun.bulletSpreadAngle));
+        newBullet.transform.localScale = Vector3.one * Player_Stats_Scr.Machinegun.bulletScale;
         newBullet.transform.RotateAround(newBullet.transform.position, Vector3.forward, bulletSpreadCurAngle);
         /*if (spreadDirectionIsRight)
         {

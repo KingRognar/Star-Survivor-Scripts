@@ -7,11 +7,6 @@ public class Player_Stats_Scr : MonoBehaviour
 {
     public static Player_Stats_Scr instance;
 
-    public static ShipStats ship = new ShipStats(10, 0, 1f, 1f);
-
-    public static MachineGunStats machineGun = new MachineGunStats(0.5f, 5f, 5, 1f);
-    public static CircleBotsStats circleBots = new CircleBotsStats(0.3f, 4, 3, 1f);
-
 
     //TODO: нужно определится с Base Damage и всяким таким или немного поменять систему
 
@@ -23,73 +18,59 @@ public class Player_Stats_Scr : MonoBehaviour
             Destroy(gameObject);
     }
 
-
-    public struct ShipStats
+    public static class Ship
     {
-        public ShipStats(int _hp, int _armor, float _damageMultiplier, float _firerateMultiplier)
-        {
-            hp = _hp; 
-            armor = _armor;
-            damageMultiplier_ = _damageMultiplier;
-            firerateMultiplier_ = _firerateMultiplier;
-        }
-
-        public int hp;
-        public int armor;
-        public float damageMultiplier
+        public static int hp = 10;
+        public static int armor = 0;
+        public static float damageMultiplier
         {
             get { return damageMultiplier_; }
-            set { damageMultiplier_ = value;
+            set
+            {
+                damageMultiplier_ = value;
 
-                machineGun.bulletDamage = (int)(machineGun.bulletDamage * damageMultiplier_);
-                Debug.Log(machineGun.bulletDamage + " | " + damageMultiplier_);
+                Machinegun.bulletDamage = (int)(Machinegun.bulletDamage * damageMultiplier_);
+                Debug.Log(Machinegun.bulletDamage + " | " + damageMultiplier_);
             }
 
         }
-        private float damageMultiplier_;
-        public float firerateMultiplier
+        private static float damageMultiplier_ = 1f;
+        public static float firerateMultiplier
         {
             get { return firerateMultiplier_; }
-            set {  firerateMultiplier_ = value;
-                machineGun.bulletSpawnDelay = machineGun.bulletSpawnDelay * firerateMultiplier_;
-                circleBots.bulletSpawnDelay = circleBots.bulletSpawnDelay * firerateMultiplier_;
+            set
+            {
+                firerateMultiplier_ = value;
+                Machinegun.bulletSpawnDelay = Machinegun.bulletSpawnDelay * firerateMultiplier_;
+                CircleBotsStats.bulletSpawnDelay = CircleBotsStats.bulletSpawnDelay * firerateMultiplier_;
             }
         }
-        private float firerateMultiplier_;
+        private static float firerateMultiplier_ = 1f;
     }
 
-    public struct MachineGunStats
+    public static class Machinegun
     {
-        public MachineGunStats(float _bulletSpawnDelay, float _bulletSpreadAngle, int _bulletDamage, float _bulletScale)
-        {
-            bulletSpawnDelay = _bulletSpawnDelay;
-            bulletSpreadAngle = _bulletSpreadAngle;
-            bulletDamage = _bulletDamage;
-            bulletScale = _bulletScale;
-        }
-
-        public float bulletSpawnDelay;
-        public float bulletSpreadAngle;
-        public int bulletDamage;
-        public float bulletScale;
+        public static float bulletSpawnDelay = 0.5f;
+        public static float bulletSpreadAngle = 5f;
+        public static int bulletDamage = 5;
+        public static float bulletScale = 1f;
     }
-    public struct CircleBotsStats
+    public static class CircleBotsStats
     {
-        public CircleBotsStats(float _bulletSpawnDelay, int _bulletDamage, int _botsCount, float _botsRotationSpeed)
-        {
-            bulletSpawnDelay = _bulletSpawnDelay;
-            bulletDamage = _bulletDamage;
-            botsCount = _botsCount;
-            botsRotationSpeed = _botsRotationSpeed;
-        }
-
-        public float bulletSpawnDelay;
-        public int bulletDamage;
-        public int botsCount;
-        public float botsRotationSpeed;
+        public static float bulletSpawnDelay = 2f;
+        public static int bulletDamage = 5;
+        public static int botsCount = 3;
+        public static float botsRotationSpeed = 1f;
         //public Vector3 circleCenter;
         //public bool allBotsIsFiring;
     }
-
-
 }
+
+
+
+
+
+
+
+
+

@@ -83,18 +83,18 @@ public class UpgradeSystem_Scr : MonoBehaviour
     }
     private void IncreasePlayerSpread()
     {
-        Player_Stats_Scr.machineGun.bulletSpreadAngle *= 1.6f;
+        Player_Stats_Scr.Machinegun.bulletSpreadAngle *= 1.6f;
     }
     private void IncreasePlayerAttackSpeed()
     {
-        Player_Stats_Scr.machineGun.bulletSpawnDelay *= 0.8f;
+        Player_Stats_Scr.Machinegun.bulletSpawnDelay *= 0.8f;
     }
     private void IncreasePlayerHP()
     {
-        Player_Stats_Scr.ship.hp = (int)(Player_Stats_Scr.ship.hp * 1.2f);
+        Player_Stats_Scr.Ship.hp = (int)(Player_Stats_Scr.Ship.hp * 1.2f);
     }
     private void IncreasePlayerArmor()
     {
-        Player_Stats_Scr.ship.armor += 2;
+        Player_Stats_Scr.Ship.armor += 2;
     }    
 }

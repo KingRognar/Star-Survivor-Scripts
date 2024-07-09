@@ -30,7 +30,7 @@ public class Bullet_Scr : MonoBehaviour
 
         Sound_FXManager_Scr.instance.PlayRandomFXClip(hitAudioClips, transform, 1);
 
-        collision.GetComponent<Enemy_Scr>().TakeDamage(Player_Stats_Scr.machineGun.bulletDamage); // TODO: изменить в зависимости от снаряда
+        collision.GetComponent<Enemy_Scr>().TakeDamage(Player_Stats_Scr.Machinegun.bulletDamage); // TODO: изменить в зависимости от снаряда
 
         collision.GetComponent<Enemy_Flash_Scr>().StartFlash();
 

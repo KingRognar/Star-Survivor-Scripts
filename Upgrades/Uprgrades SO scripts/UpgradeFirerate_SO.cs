@@ -9,6 +9,6 @@ public class UpgradeFirerate_SO : UpgradeOption_SO
 
     public override void UpgradeAction()
     {
-        Player_Stats_Scr.ship.firerateMultiplier -= firerateMultiplierDecrease;
+        Player_Stats_Scr.Ship.firerateMultiplier -= firerateMultiplierDecrease;
     }
 }

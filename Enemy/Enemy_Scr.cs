@@ -6,16 +6,17 @@ public class Enemy_Scr : MonoBehaviour
 {
     public float movementSpeed = 2f;
     public float maxHealth = 10f;
-    private float curHealth;
+    protected float curHealth;
     public int expAward = 2;
 
     private void Awake()
     {
         curHealth = maxHealth;
+        Destroy(gameObject, 15f);
     }
-    void Update()
+    private void Update()
     {
-        transform.position += -transform.up * Time.deltaTime * movementSpeed;
+        EnemyMovement();
     }
 
 
@@ -32,6 +33,15 @@ public class Enemy_Scr : MonoBehaviour
     {
         UpgradeSystem_Scr.instance.AwardEXP(expAward);
         Destroy(gameObject);
+    }
+    protected void Disappear()
+    {
+        Destroy(gameObject);
+    }
+
+    protected virtual void EnemyMovement()
+    {
+        transform.position += -transform.up * Time.deltaTime * movementSpeed;
     }
 
 

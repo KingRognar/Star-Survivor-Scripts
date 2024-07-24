@@ -20,7 +20,8 @@ public class Player_Stats_Scr : MonoBehaviour
 
     public static class Ship
     {
-        public static int hp = 10;
+        public static int maxHp = 10;
+        public static int curHp = 10;
         public static int armor = 0;
         public static float damageMultiplier
         {

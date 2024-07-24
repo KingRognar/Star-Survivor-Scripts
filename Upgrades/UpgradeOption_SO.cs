@@ -17,6 +17,8 @@ public class UpgradeOption_SO : ScriptableObject
     public string upgradeName;
     public string upgradeDesription;
 
+    public List<UpgradeOption_SO> nextUpgrades = new List<UpgradeOption_SO>();
+
     private void Start()
     {
         upgradeSystem = UpgradeSystem_Scr.instance;

@@ -9,6 +9,6 @@ public class Player_Movement_Scr : MonoBehaviour
     void Update()
     {
         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        transform.position = new Vector3(mouseWorldPos.x, mouseWorldPos.y, 0);
+        transform.position = Vector3.Lerp(transform.position, new Vector3(mouseWorldPos.x, mouseWorldPos.y, 0), 10 * Time.deltaTime);
     }
 }

@@ -7,7 +7,6 @@ using UnityEngine;
 
 public class Enemy_Flash_Scr : MonoBehaviour
 {
-
     private SpriteRenderer spriteRenderer;
     private Material shaderMaterial;
     [SerializeField] private float flashTime = 0.2f;
@@ -18,6 +17,8 @@ public class Enemy_Flash_Scr : MonoBehaviour
     private CancellationTokenSource cts;
     private CancellationToken token;
 
+
+    //TODO: переименовать и перенести в папку скриптов для шейдеров
 
     public void Awake()
     {

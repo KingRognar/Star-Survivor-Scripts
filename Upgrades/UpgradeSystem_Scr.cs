@@ -15,9 +15,9 @@ public class UpgradeSystem_Scr : MonoBehaviour
     [SerializeField] private GameObject levelUpMenu;
 
     [SerializeField] private UI_EXP_Bar_Scr expBarUI;
-    [SerializeField] private List<UI_LvlUp_UpgradeOption_Scr> lvlUpOptions;
+    [SerializeField] private List<UI_LvlUp_UpgradeOption_Scr> UIlvlUpOptions;
 
-    [SerializeField] private List<UpgradeOption_SO> upgradesList = new List<UpgradeOption_SO>(); 
+    public List<UpgradeOption_SO> upgradesList = new List<UpgradeOption_SO>(); 
 
     private void Awake()
     {
@@ -47,15 +47,27 @@ public class UpgradeSystem_Scr : MonoBehaviour
 
     private void OpenLvlUpMenu()
     {
+        if (upgradesList.Count == 0)
+            CloseLvlUpMenu();
+
         Time.timeScale = 0;
         levelUpMenu.SetActive(true);
 
-        foreach (UI_LvlUp_UpgradeOption_Scr lvlUpOtion in lvlUpOptions) // TODO: доделать
+
+        int cnt = 3;
+        if (upgradesList.Count < 3)
+            cnt = upgradesList.Count;
+
+        int i = 0;
+        while (i < 3)
         {
             int num = UnityEngine.Random.Range(0, upgradesList.Count);
-            lvlUpOtion.bonusNum = num;
-            lvlUpOtion.upgradeOptionSO = upgradesList[num];
-            lvlUpOtion.UpdateVisuals();
+            UIlvlUpOptions[i].upgradeOptionSO = upgradesList[num];
+            UIlvlUpOptions[i].UpdateVisuals();
+            if (i + 1 > cnt)
+                UIlvlUpOptions[i].gameObject.SetActive(false);
+
+            i++;
         }
     }
     public void CloseLvlUpMenu()
@@ -66,13 +78,6 @@ public class UpgradeSystem_Scr : MonoBehaviour
         levelUpMenu.SetActive(false);
     }
 
-
-    public void upgrade(int option)
-    {
-        upgradesList[option].UpgradeAction();
-    }
-
-
     private void AddUpgradesToList() // TODO: придумать метод для добавления ScriptableObjects
     {
         /*upgradesList.Clear();
@@ -81,20 +86,4 @@ public class UpgradeSystem_Scr : MonoBehaviour
         upgradesList.Add(IncreasePlayerHP);
         upgradesList.Add(IncreasePlayerArmor);*/
     }
-    private void IncreasePlayerSpread()
-    {
-        Player_Stats_Scr.Machinegun.bulletSpreadAngle *= 1.6f;
-    }
-    private void IncreasePlayerAttackSpeed()
-    {
-        Player_Stats_Scr.Machinegun.bulletSpawnDelay *= 0.8f;
-    }
-    private void IncreasePlayerHP()
-    {
-        Player_Stats_Scr.Ship.hp = (int)(Player_Stats_Scr.Ship.hp * 1.2f);
-    }
-    private void IncreasePlayerArmor()
-    {
-        Player_Stats_Scr.Ship.armor += 2;
-    }    
 }

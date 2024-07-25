@@ -23,7 +23,8 @@ public class Bullet_Scr : MonoBehaviour
         if (!collision.gameObject.CompareTag("Enemy"))
             return;
 
-
+        //TODO: перенести на скрипт врага в отдельных функциях
+        
         Vector3 collisionPoint = gameObject.GetComponent<Collider2D>().ClosestPoint(collision.transform.position);
 
         collision.gameObject.GetComponent<Enemy_HitEffect_Scr>().SpawnParticles(collisionPoint, transform.position);

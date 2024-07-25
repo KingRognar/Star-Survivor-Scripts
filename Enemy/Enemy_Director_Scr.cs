@@ -22,6 +22,7 @@ public class Enemy_Director_Scr : MonoBehaviour
 
 
     //TODO: сделать SO уровня, который будет контролировать спавн врагов
+    //TODO: добавить разные методы для спавна врагов
 
 
     private void Awake()

@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Enemy_Flash_Scr))]
+[RequireComponent(typeof(Enemy_HitEffect_Scr))]
 public class Enemy_Scr : MonoBehaviour
 {
     public float movementSpeed = 2f;
@@ -9,7 +11,7 @@ public class Enemy_Scr : MonoBehaviour
     protected float curHealth;
     public int expAward = 2;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         curHealth = maxHealth;
         Destroy(gameObject, 15f);

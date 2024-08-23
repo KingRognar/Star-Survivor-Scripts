@@ -6,8 +6,13 @@ using UnityEngine;
 
 public class Enemy_Director_Scr : MonoBehaviour
 {
-    public GameObject basicEnemyPrefab;
-    public GameObject arcEnemyPrefab;
+    public static Enemy_Director_Scr instance;
+
+
+    [SerializeField] private GameObject basicEnemyPrefab;
+    [SerializeField] private GameObject arcEnemyPrefab;
+    [SerializeField] private GameObject railgunEnemyPrefab;
+    public static List<Transform> railgunEnemiesList = new List<Transform>();
 
     [SerializeField] private float enemySpawnDelay = 1f;
     private float lastTimeEnemySpawned = -1f;
@@ -22,11 +27,15 @@ public class Enemy_Director_Scr : MonoBehaviour
 
 
     //TODO: сделать SO уровня, который будет контролировать спавн врагов
-    //TODO: добавить разные методы для спавна врагов
 
 
     private void Awake()
     {
+        if (instance == null)
+            instance = this;
+        else
+            Destroy(gameObject);
+
         screenHeight = Camera.main.pixelHeight + 100;
         screenWidth = Camera.main.pixelWidth - 100;
 
@@ -61,8 +70,12 @@ public class Enemy_Director_Scr : MonoBehaviour
                 waveNum = (int)(Time.time / waveTime);
                 if (waveNum % 2 == 0)
                 {
-                    SpawnBasicEnemy();
+                    if (Random.Range(0,100) < 40)
+                    {
+                        railgunEnemiesList.Add(SpawnRandomOnLane(railgunEnemyPrefab).transform);
+                    }
 
+                    SpawnBasicEnemy();
                     await Task.Delay((int)(1000 * enemySpawnDelay));
                 }
                 else
@@ -85,22 +98,7 @@ public class Enemy_Director_Scr : MonoBehaviour
 
     private void SpawnBasicEnemy()
     {
-        Instantiate(basicEnemyPrefab, new Vector3(Random.Range(leftmostPoint, rightmostPoint), upperPoint, 0), Quaternion.identity);
-    }
-    private void SpawnArcEnemy(bool spawnFromLeft)
-    {
-        if (spawnFromLeft) 
-        {
-            Enemy_ArcMoving_Scr arcEnemy = Instantiate(arcEnemyPrefab, new Vector3(leftmostPoint, upperPoint, 0), Quaternion.identity).GetComponent<Enemy_ArcMoving_Scr>();
-            arcEnemy.moveToRight = true;
-        }
-        else
-        {
-            Enemy_ArcMoving_Scr arcEnemy = Instantiate(arcEnemyPrefab, new Vector3(-leftmostPoint, upperPoint, 0), Quaternion.identity).GetComponent<Enemy_ArcMoving_Scr>();
-            arcEnemy.moveToRight = false;
-        }
-
-
+        SpawnRandomOnLane(basicEnemyPrefab);
     }
     private async Task SpawnArcSquad()
     {
@@ -111,10 +109,24 @@ public class Enemy_Director_Scr : MonoBehaviour
                 return;
             }
 
-            SpawnArcEnemy(spawnArcsFromLeft);
+            Enemy_ArcMoving_Scr arcEnemy = SpawnOnUpperCorner(arcEnemyPrefab, spawnArcsFromLeft).GetComponent<Enemy_ArcMoving_Scr>();
+            arcEnemy.moveToRight = !spawnArcsFromLeft;
+
             await Task.Delay(400);
         }
         spawnArcsFromLeft = !spawnArcsFromLeft;
+    }
+
+    private GameObject SpawnRandomOnLane(GameObject enemyPrefab)
+    {
+        return Instantiate(enemyPrefab, new Vector3(Random.Range(leftmostPoint, rightmostPoint), upperPoint, 0), Quaternion.identity);
+    }
+    private GameObject SpawnOnUpperCorner(GameObject enemyPrefab, bool spawnFromRightCorner)
+    {
+        if (spawnFromRightCorner)
+            return Instantiate(enemyPrefab, new Vector3(-leftmostPoint, upperPoint, 0), Quaternion.identity);
+        else
+            return Instantiate(enemyPrefab, new Vector3(leftmostPoint, upperPoint, 0), Quaternion.identity);
     }
 
 }

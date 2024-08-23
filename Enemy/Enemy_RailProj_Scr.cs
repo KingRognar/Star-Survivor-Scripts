@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class Enemy_RailProj_Scr : MonoBehaviour
+public class Enemy_RailProj_Scr : Enemy_BaseProj_Scr
 {
     private SpriteRenderer spriteRenderer;
     private Material shaderMaterial;
@@ -12,7 +12,6 @@ public class Enemy_RailProj_Scr : MonoBehaviour
     private bool isMovementStarted = false;
     private float currentGlowIntensity = 0f;
 
-    //TODO: сделать базовый класс для вражеских снарядов
 
     private void Awake()
     {
@@ -20,7 +19,6 @@ public class Enemy_RailProj_Scr : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         shaderMaterial = spriteRenderer.material;
     }
-
     private void Update()
     {
         if (isGlowStarted && !isMovementStarted)
@@ -42,9 +40,5 @@ public class Enemy_RailProj_Scr : MonoBehaviour
             isMovementStarted = true;
             transform.parent = null;
         }
-    }
-    private void Movement()
-    {
-        transform.position += new Vector3(0, -1, 0) * 20 * Time.deltaTime;
     }
 }

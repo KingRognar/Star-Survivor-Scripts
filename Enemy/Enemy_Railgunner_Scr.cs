@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.UI.ScrollRect;
 
@@ -16,6 +17,8 @@ public class Enemy_Railgunner_Scr : Enemy_Scr
     [SerializeField] private GameObject railPrefab;
     private Transform railSpawnPoint1, railSpawnPoint2;
 
+    [SerializeField] private float avoidanceDistance = 1f;
+
     protected override void Awake()
     {
         curHealth = maxHealth;
@@ -30,7 +33,7 @@ public class Enemy_Railgunner_Scr : Enemy_Scr
 
     protected override void EnemyMovement()
     {
-        transform.position = Vector3.Lerp(transform.position, new Vector3(playerTrans.position.x, yPosition, 0), movementSpeed * Time.deltaTime);
+        transform.position = Vector3.Lerp(transform.position, GetMoveToPosition(), movementSpeed * Time.deltaTime);
 
         //TODO: нужен ли базовый метод в Enemy_Scr?
         if (lastShotTime < Time.time)
@@ -40,6 +43,30 @@ public class Enemy_Railgunner_Scr : Enemy_Scr
             _ = ShootRail();
         }
     }
+
+    private Vector3 GetMoveToPosition()
+    {
+        return new Vector3(playerTrans.position.x + CalculateAdjustDistance(avoidanceDistance), yPosition, 0);
+    }
+    private float CalculateAdjustDistance(float avoidanceDistance)
+    {
+        float totalAdjustDistance = 0f;
+        foreach (Transform railgunner in Enemy_Director_Scr.railgunEnemiesList)
+        {
+            if (railgunner == transform)
+                continue;
+            float distance = Vector2.SqrMagnitude(transform.position - railgunner.position);
+            float sqrAvoidance = avoidanceDistance * avoidanceDistance;
+            if (distance > sqrAvoidance)
+                continue;
+            if (transform.position.x >= railgunner.position.x)
+                totalAdjustDistance += avoidanceDistance - Mathf.Sqrt(distance);
+            else
+                totalAdjustDistance += Mathf.Sqrt(distance) - avoidanceDistance;
+        }
+        return totalAdjustDistance;
+    }
+
     private async Task ShootRail()
     {
         Transform newRail;
@@ -69,5 +96,11 @@ public class Enemy_Railgunner_Scr : Enemy_Scr
         }
 
         newRail.GetComponent<Enemy_RailProj_Scr>().startGlow();
+    }
+
+    protected override void Die()
+    {
+        Enemy_Director_Scr.railgunEnemiesList.Remove(transform);
+        base.Die();
     }
 }

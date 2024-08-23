@@ -23,15 +23,27 @@ public class Enemy_Scr : MonoBehaviour
 
 
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (!collision.gameObject.CompareTag("Player_Bullets"))
+            return;
+
+        Vector3 collisionPoint = gameObject.GetComponent<Collider2D>().ClosestPoint(collision.transform.position);
+
+        GetComponent<Enemy_HitEffect_Scr>().SpawnParticles(collisionPoint, collision.transform.position);
+        GetComponent<Enemy_Flash_Scr>().StartFlash();
+        TakeDamage(Player_Stats_Scr.Machinegun.bulletDamage); // TODO: изменить в зависимости от снаряда
+    }
 
     public void TakeDamage(int damage)
     {
         curHealth -= damage;
+        Pushback(damage);
 
         if (curHealth <= 0)
             Die();
     }
-    private void Die()
+   protected virtual void Die()
     {
         UpgradeSystem_Scr.instance.AwardEXP(expAward);
         Destroy(gameObject);
@@ -40,11 +52,14 @@ public class Enemy_Scr : MonoBehaviour
     {
         Destroy(gameObject);
     }
+    protected virtual void Pushback(int damage)
+    {
+        transform.position += Vector3.up * ((float)damage / maxHealth);
+    }
 
     protected virtual void EnemyMovement()
     {
         transform.position += -transform.up * Time.deltaTime * movementSpeed;
     }
-
 
 }

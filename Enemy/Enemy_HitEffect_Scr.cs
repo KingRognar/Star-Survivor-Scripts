@@ -9,7 +9,7 @@ public class Enemy_HitEffect_Scr : MonoBehaviour
     [SerializeField] private float scatterAngleRange = 20f;
 
 
-    public void SpawnParticles(Vector3 collisionPoint, Vector3 bulletPosition) //TODO: добавить direction
+    public void SpawnParticles(Vector3 collisionPoint, Vector3 bulletPosition) //TODO: добавить direction?
     {
         int particlesCount = Random.Range(minParticlesCount, maxParticlesCount);
         for (int i = 0; i < particlesCount; i++)

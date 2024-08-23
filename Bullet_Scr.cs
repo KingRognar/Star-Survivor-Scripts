@@ -23,18 +23,7 @@ public class Bullet_Scr : MonoBehaviour
         if (!collision.gameObject.CompareTag("Enemy"))
             return;
 
-        //TODO: перенести на скрипт врага в отдельных функциях
-        
-        Vector3 collisionPoint = gameObject.GetComponent<Collider2D>().ClosestPoint(collision.transform.position);
-
-        collision.gameObject.GetComponent<Enemy_HitEffect_Scr>().SpawnParticles(collisionPoint, transform.position);
-
         Sound_FXManager_Scr.instance.PlayRandomFXClip(hitAudioClips, transform, 1);
-
-        collision.GetComponent<Enemy_Scr>().TakeDamage(Player_Stats_Scr.Machinegun.bulletDamage); // TODO: изменить в зависимости от снаряда
-
-        collision.GetComponent<Enemy_Flash_Scr>().StartFlash();
-
         Destroy(gameObject);
     }
 }

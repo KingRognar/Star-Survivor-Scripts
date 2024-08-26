@@ -31,13 +31,14 @@ public class Enemy_Scr : MonoBehaviour
         Vector3 collisionPoint = gameObject.GetComponent<Collider2D>().ClosestPoint(collision.transform.position);
 
         GetComponent<Enemy_HitEffect_Scr>().SpawnParticles(collisionPoint, collision.transform.position);
-        GetComponent<Enemy_Flash_Scr>().StartFlash();
         TakeDamage(Player_Stats_Scr.Machinegun.bulletDamage); // TODO: изменить в зависимости от снаряда
     }
 
     public void TakeDamage(int damage)
     {
         curHealth -= damage;
+
+        GetComponent<Enemy_Flash_Scr>().StartFlash();
         Pushback(damage);
 
         if (curHealth <= 0)

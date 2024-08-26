@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.Burst.CompilerServices;
 using UnityEngine;
 
@@ -8,10 +9,12 @@ public class Gun_ChainLightning_Scr : MonoBehaviour
     public GameObject projectilePrefab;
 
     private float lastBulletSpawnTime = -1f;
+    [SerializeField] private int damage = 2;
     [SerializeField] private int chainsCount = 4;
 
     //TODO: добавить звуковой эффект молнии
-    //TODO: добавить fadeout визуальный эффект
+    //TODO: »скать нового врага только после исчезани€ старой части цепи
+    //TODO: сделать маску дл€ рейкаста, чтоб хватал только врагов
 
     void Update()
     {
@@ -33,9 +36,6 @@ public class Gun_ChainLightning_Scr : MonoBehaviour
         RaycastHit2D[] hits = new RaycastHit2D[10];
 
         //TODO: прибратьс€
-        //TODO: добавл€ть метку тех в кого уже попали
-        //TODO: сделать итеративным, чтоб можно было мен€ть количество отскоков
-        //TODO: перемещать коллайдер в место последнего попадани€
         //TODO: измен€ть радиус коллайдера
 
 
@@ -49,14 +49,12 @@ public class Gun_ChainLightning_Scr : MonoBehaviour
         if (hits[0].transform != null && hits[0].transform.CompareTag("Enemy"))
         {
             transToHitHS.Add(hits[0].transform);
-            projLineRenderer.SetPosition(1, transform.InverseTransformPoint(transToHitHS[0].position));
+            //projLineRenderer.SetPosition(1, transform.InverseTransformPoint(transToHitHS[0].position));
 
             int i = 0;
-            bool thereIsAnotherTarget = true;
             while (i < chainsCount)
             {
                 projCollider.offset = transform.InverseTransformPoint(transToHitHS[i].position);
-                //hits = new RaycastHit2D[10];
                 Debug.Log(projCollider.Cast(Vector2.zero, hits, 0.1f));
                 foreach (RaycastHit2D hit in hits)
                 {
@@ -64,9 +62,9 @@ public class Gun_ChainLightning_Scr : MonoBehaviour
                         continue;
                     if (transToHitHS.Contains(hit.transform))
                         continue;
-                    projLineRenderer.positionCount++;
+                    //projLineRenderer.positionCount++;
                     transToHitHS.Add(hit.transform);
-                    projLineRenderer.SetPosition(i+2, transform.InverseTransformPoint(transToHitHS[i+1].position));
+                    //projLineRenderer.SetPosition(i+2, transform.InverseTransformPoint(transToHitHS[i+1].position));
                     break;
                 }
 
@@ -75,12 +73,48 @@ public class Gun_ChainLightning_Scr : MonoBehaviour
                     break;
             }
 
-
+            _ = ChainVisuals(projLineRenderer, transToHitHS);
         }
         else
         {
             projLineRenderer.SetPosition(1, transform.InverseTransformPoint(transform.position + Vector3.up * 10));
+            Destroy(newProj, 0.1f);
         }
-        Destroy(newProj, 0.2f);
+
+    }
+    private async Task ChainVisuals(LineRenderer lineRenderer, List<Transform> transforms)
+    {
+        transforms.Insert(0, transform);
+        int chainCount = transforms.Count-1;
+        for (int i = 0; i < chainCount; i++)
+        {
+            if (destroyCancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
+            lineRenderer.SetPosition(0, transform.InverseTransformPoint(transforms[i].position));
+            lineRenderer.SetPosition(1, transform.InverseTransformPoint(transforms[i+1].position));
+            Enemy_Scr enemy = transforms[i+1].GetComponent<Enemy_Scr>();
+            enemy.TakeDamage(damage);
+            await FadeChain(lineRenderer.material);
+        }
+        Destroy(lineRenderer.gameObject);
+    }
+    private async Task FadeChain(Material material)
+    {
+        float fadeTime = 0.15f;
+        float curTime = 0f;
+        while (curTime < fadeTime)
+        {
+            if (destroyCancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
+            material.SetFloat("_DissolvePercent", curTime / fadeTime);
+            curTime += Time.deltaTime;
+            await Task.Yield();
+        }
     }
 }

@@ -46,7 +46,9 @@ public class Enemy_Railgunner_Scr : Enemy_Scr
 
     private Vector3 GetMoveToPosition()
     {
-        return new Vector3(playerTrans.position.x + CalculateAdjustDistance(avoidanceDistance), yPosition, 0);
+        if (playerTrans != null)
+            return new Vector3(playerTrans.position.x + CalculateAdjustDistance(avoidanceDistance), yPosition, 0);
+        return transform.position;
     }
     private float CalculateAdjustDistance(float avoidanceDistance)
     {

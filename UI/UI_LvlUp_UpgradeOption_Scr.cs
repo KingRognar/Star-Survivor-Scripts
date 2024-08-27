@@ -16,7 +16,7 @@ public class UI_LvlUp_UpgradeOption_Scr : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData pointerEventData)
     {
         //Output to console the clicked GameObject's name and the following message. You can replace this with your own actions for when clicking the GameObject.
-        Debug.Log("You chose " + upgradeOptionSO.upgradeName);
+        //Debug.Log("You chose " + upgradeOptionSO.upgradeName);
 
         upgradeOptionSO.UpgradeAction();
         UpgradeSystem_Scr.instance.upgradesList.AddRange(upgradeOptionSO.nextUpgrades);

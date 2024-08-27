@@ -9,7 +9,7 @@ public class Gun_ChainLightning_Scr : MonoBehaviour
     public GameObject projectilePrefab;
 
     private float lastBulletSpawnTime = -1f;
-    [SerializeField] private int damage = 2;
+    [SerializeField] private int damage = 3;
     [SerializeField] private int chainsCount = 4;
 
     //TODO: добавить звуковой эффект молнии
@@ -30,9 +30,9 @@ public class Gun_ChainLightning_Scr : MonoBehaviour
         InstantiateNewProjectile();
     }
 
-    void InstantiateNewProjectile() 
+    async void InstantiateNewProjectile() 
     {
-        List<Transform> transToHitHS = new List<Transform>();
+        List<Transform> transToHit = new List<Transform>();
         RaycastHit2D[] hits = new RaycastHit2D[10];
 
         //TODO: прибраться
@@ -40,66 +40,58 @@ public class Gun_ChainLightning_Scr : MonoBehaviour
 
 
         // пускаем рэйкаст вперёд в поисках врага
-        hits[0] = Physics2D.Raycast(transform.position, Vector3.up, 10f);
+        hits[0] = Physics2D.Raycast(transform.position, Vector3.up, 10f, 1 << 8);
         // создаём снаряд и инициализируем объекты для управления им
         GameObject newProj = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
         LineRenderer projLineRenderer = newProj.GetComponent<LineRenderer>();
-        CircleCollider2D projCollider = newProj.GetComponent <CircleCollider2D>();
 
         if (hits[0].transform != null && hits[0].transform.CompareTag("Enemy"))
         {
-            transToHitHS.Add(hits[0].transform);
-            //projLineRenderer.SetPosition(1, transform.InverseTransformPoint(transToHitHS[0].position));
+            transToHit.Add(transform);
+            transToHit.Add(hits[0].transform);
 
-            int i = 0;
-            while (i < chainsCount)
+            await ChainVisuals(projLineRenderer, transToHit[0].position, transToHit[1].position);
+            transToHit[1].GetComponent<Enemy_Scr>().TakeDamage(damage);
+
+            bool addedNewChain = true;
+            int i = 1;
+            while (i < chainsCount && addedNewChain)
             {
-                projCollider.offset = transform.InverseTransformPoint(transToHitHS[i].position);
-                Debug.Log(projCollider.Cast(Vector2.zero, hits, 0.1f));
+                addedNewChain = false;
+                hits = Physics2D.CircleCastAll(transToHit[i].position, 1.5f, Vector2.up, 0.01f, 1 << 8);
+
                 foreach (RaycastHit2D hit in hits)
                 {
                     if (hit.transform == null || !hit.transform.CompareTag("Enemy"))
                         continue;
-                    if (transToHitHS.Contains(hit.transform))
+                    if (transToHit.Contains(hit.transform))
                         continue;
-                    //projLineRenderer.positionCount++;
-                    transToHitHS.Add(hit.transform);
-                    //projLineRenderer.SetPosition(i+2, transform.InverseTransformPoint(transToHitHS[i+1].position));
+
+                    transToHit.Add(hit.transform);
+                    addedNewChain = true;
                     break;
                 }
 
-                i++;
-                if (i+1 > transToHitHS.Count)
-                    break;
-            }
+                if (addedNewChain)
+                {
+                    await ChainVisuals(projLineRenderer, transToHit[i].position, transToHit[i + 1].position);
+                    transToHit[i + 1].GetComponent<Enemy_Scr>().TakeDamage(damage);
+                }
 
-            _ = ChainVisuals(projLineRenderer, transToHitHS);
+                i++;
+            }
         }
         else
         {
-            projLineRenderer.SetPosition(1, transform.InverseTransformPoint(transform.position + Vector3.up * 10));
-            Destroy(newProj, 0.1f);
+            await ChainVisuals(projLineRenderer, transform.position, transform.position + Vector3.up * 10);           
         }
-
+        Destroy(newProj);
     }
-    private async Task ChainVisuals(LineRenderer lineRenderer, List<Transform> transforms)
+    private async Task ChainVisuals(LineRenderer lineRenderer, Vector3 chainBeginigPoint, Vector3 chainEndPoint)
     {
-        transforms.Insert(0, transform);
-        int chainCount = transforms.Count-1;
-        for (int i = 0; i < chainCount; i++)
-        {
-            if (destroyCancellationToken.IsCancellationRequested)
-            {
-                return;
-            }
-
-            lineRenderer.SetPosition(0, transform.InverseTransformPoint(transforms[i].position));
-            lineRenderer.SetPosition(1, transform.InverseTransformPoint(transforms[i+1].position));
-            Enemy_Scr enemy = transforms[i+1].GetComponent<Enemy_Scr>();
-            enemy.TakeDamage(damage);
-            await FadeChain(lineRenderer.material);
-        }
-        Destroy(lineRenderer.gameObject);
+        lineRenderer.SetPosition(0, transform.InverseTransformPoint(chainBeginigPoint));
+        lineRenderer.SetPosition(1, transform.InverseTransformPoint(chainEndPoint));
+        await FadeChain(lineRenderer.material);
     }
     private async Task FadeChain(Material material)
     {

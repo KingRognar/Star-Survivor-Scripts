@@ -31,7 +31,7 @@ public class Player_Stats_Scr : MonoBehaviour
                 damageMultiplier_ = value;
 
                 Machinegun.bulletDamage = (int)(Machinegun.bulletDamage * damageMultiplier_);
-                Debug.Log(Machinegun.bulletDamage + " | " + damageMultiplier_);
+                //Debug.Log(Machinegun.bulletDamage + " | " + damageMultiplier_);
             }
 
         }

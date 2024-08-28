@@ -4,8 +4,11 @@ using System.Threading.Tasks;
 using Unity.Burst.CompilerServices;
 using UnityEngine;
 
+
 public class Gun_ChainLightning_Scr : MonoBehaviour
 {
+     
+
     public GameObject projectilePrefab;
 
     private float lastBulletSpawnTime = -1f;
@@ -32,7 +35,8 @@ public class Gun_ChainLightning_Scr : MonoBehaviour
 
     async void InstantiateNewProjectile() 
     {
-        List<Transform> transToHit = new List<Transform>();
+        List<Transform> transformHitList = new List<Transform>();
+        List<Vector3> hitPositions = new List<Vector3>();
         RaycastHit2D[] hits = new RaycastHit2D[10];
 
         //TODO: прибраться
@@ -47,35 +51,38 @@ public class Gun_ChainLightning_Scr : MonoBehaviour
 
         if (hits[0].transform != null && hits[0].transform.CompareTag("Enemy"))
         {
-            transToHit.Add(transform);
-            transToHit.Add(hits[0].transform);
+            transformHitList.Add(hits[0].transform);
+            hitPositions.Add(transform.position);
+            hitPositions.Add(transformHitList[0].position);
 
-            await ChainVisuals(projLineRenderer, transToHit[0].position, transToHit[1].position);
-            transToHit[1].GetComponent<Enemy_Scr>().TakeDamage(damage);
+            transformHitList[0].GetComponent<Enemy_Scr>().TakeDamage(damage);
+            await ChainVisuals(projLineRenderer, hitPositions[0], hitPositions[1]);
+            
 
             bool addedNewChain = true;
             int i = 1;
             while (i < chainsCount && addedNewChain)
             {
                 addedNewChain = false;
-                hits = Physics2D.CircleCastAll(transToHit[i].position, 1.5f, Vector2.up, 0.01f, 1 << 8);
+                hits = Physics2D.CircleCastAll(hitPositions[i], 1.5f, Vector2.up, 0.01f, 1 << 8);
 
                 foreach (RaycastHit2D hit in hits)
                 {
                     if (hit.transform == null || !hit.transform.CompareTag("Enemy"))
                         continue;
-                    if (transToHit.Contains(hit.transform))
+                    if (transformHitList.Contains(hit.transform))
                         continue;
 
-                    transToHit.Add(hit.transform);
+                    transformHitList.Add(hit.transform);
+                    hitPositions.Add(hit.transform.position);
                     addedNewChain = true;
                     break;
                 }
 
                 if (addedNewChain)
                 {
-                    await ChainVisuals(projLineRenderer, transToHit[i].position, transToHit[i + 1].position);
-                    transToHit[i + 1].GetComponent<Enemy_Scr>().TakeDamage(damage);
+                    transformHitList[i].GetComponent<Enemy_Scr>().TakeDamage(damage);
+                    await ChainVisuals(projLineRenderer, hitPositions[i], hitPositions[i + 1]);
                 }
 
                 i++;

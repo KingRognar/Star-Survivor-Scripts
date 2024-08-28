@@ -14,6 +14,7 @@ public class Gun_ChainLightning_Scr : MonoBehaviour
     private float lastBulletSpawnTime = -1f;
     [SerializeField] private int damage = 3;
     [SerializeField] private int chainsCount = 4;
+    [SerializeField] private float chainMaxDistance = 1.5f;
 
     //TODO: добавить звуковой эффект молнии
     //TODO: Искать нового врага только после исчезания старой части цепи
@@ -55,7 +56,7 @@ public class Gun_ChainLightning_Scr : MonoBehaviour
             hitPositions.Add(transform.position);
             hitPositions.Add(transformHitList[0].position);
 
-            transformHitList[0].GetComponent<Enemy_Scr>().TakeDamage(damage);
+            transformHitList[0].GetComponent<Enemy_Scr>().TakeDamage(damage, hitPositions[0]);
             await ChainVisuals(projLineRenderer, hitPositions[0], hitPositions[1]);
             
 
@@ -64,7 +65,7 @@ public class Gun_ChainLightning_Scr : MonoBehaviour
             while (i < chainsCount && addedNewChain)
             {
                 addedNewChain = false;
-                hits = Physics2D.CircleCastAll(hitPositions[i], 1.5f, Vector2.up, 0.01f, 1 << 8);
+                hits = Physics2D.CircleCastAll(hitPositions[i], chainMaxDistance, Vector2.up, 0.01f, 1 << 8);
 
                 foreach (RaycastHit2D hit in hits)
                 {
@@ -81,7 +82,7 @@ public class Gun_ChainLightning_Scr : MonoBehaviour
 
                 if (addedNewChain)
                 {
-                    transformHitList[i].GetComponent<Enemy_Scr>().TakeDamage(damage);
+                    transformHitList[i].GetComponent<Enemy_Scr>().TakeDamage(damage, hitPositions[i]);
                     await ChainVisuals(projLineRenderer, hitPositions[i], hitPositions[i + 1]);
                 }
 

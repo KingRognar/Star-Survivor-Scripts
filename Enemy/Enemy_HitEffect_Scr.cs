@@ -10,8 +10,10 @@ public class Enemy_HitEffect_Scr : MonoBehaviour
     [SerializeField] private float scatterAngleRange = 20f;
 
 
-    public void SpawnParticles(Vector3 collisionPoint, Vector3 bulletPosition) //TODO: добавить direction?
+    public void SpawnParticles(Vector3 projectilePosition)
     {
+        Vector3 collisionPoint = GetComponent<Collider2D>().ClosestPoint(projectilePosition);
+
         int particlesCount = Random.Range(minParticlesCount, maxParticlesCount);
         for (int i = 0; i < particlesCount; i++)
         {
@@ -19,7 +21,7 @@ public class Enemy_HitEffect_Scr : MonoBehaviour
             float colorVariability = Random.Range(-0.05f, 0.05f);
             particle.GetComponent<SpriteRenderer>().color = particleColor + new Color(colorVariability, colorVariability, colorVariability);
             particle.RotateAround(particle.position, particle.forward, Random.Range(-180, 180));
-            Vector3 directionToMove = bulletPosition - collisionPoint;
+            Vector3 directionToMove = projectilePosition - collisionPoint;
             directionToMove.Normalize();
             directionToMove = Quaternion.AngleAxis(Random.Range(-scatterAngleRange,scatterAngleRange),transform.forward) * directionToMove;
             particle.GetComponent<Enemy_HitParticles_Scr>().directionToMove = directionToMove;

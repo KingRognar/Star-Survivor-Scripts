@@ -30,15 +30,15 @@ public class Enemy_Scr : MonoBehaviour
 
         Vector3 collisionPoint = gameObject.GetComponent<Collider2D>().ClosestPoint(collision.transform.position);
 
-        GetComponent<Enemy_HitEffect_Scr>().SpawnParticles(collisionPoint, collision.transform.position);
-        TakeDamage(Player_Stats_Scr.Machinegun.bulletDamage); // TODO: изменить в зависимости от снаряда
+        TakeDamage(Player_Stats_Scr.Machinegun.bulletDamage, collision.transform.position - transform.position); // TODO: изменить в зависимости от снаряда
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, Vector3 hitDirection)
     {
         curHealth -= damage;
 
         GetComponent<Enemy_Flash_Scr>().StartFlash();
+        GetComponent<Enemy_HitEffect_Scr>().SpawnParticles(hitDirection);
         Pushback(damage);
 
         if (curHealth <= 0)

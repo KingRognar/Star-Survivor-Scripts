@@ -11,6 +11,8 @@ public class Enemy_Scr : MonoBehaviour
     protected float curHealth;
     public int expAward = 2;
 
+    private bool becameVisible = false;
+
     protected virtual void Awake()
     {
         curHealth = maxHealth;
@@ -46,7 +48,7 @@ public class Enemy_Scr : MonoBehaviour
    protected virtual void Die()
     {
         UpgradeSystem_Scr.instance.AwardEXP(expAward);
-        Destroy(gameObject);
+        Disappear();
     }
     protected void Disappear()
     {
@@ -60,6 +62,16 @@ public class Enemy_Scr : MonoBehaviour
     protected virtual void EnemyMovement()
     {
         transform.position += -transform.up * Time.deltaTime * movementSpeed;
+    }
+
+    private void OnBecameVisible()
+    {
+        becameVisible = true;
+    }
+    private void OnBecameInvisible()
+    {
+        if (becameVisible == true)
+            Disappear();
     }
 
 }

@@ -5,21 +5,32 @@ using UnityEngine;
 
 public class Weapon_SnakeDrone_Scr : MonoBehaviour
 {
+    //public static Weapon_SnakeDrone_Scr instance;
+
     [SerializeField] private float movementSpeed = 3f;
     [SerializeField] private float rotationSpeed = 30f;
     [SerializeField] private float circlingDistance = 0.3f;
+    [SerializeField] private float cosAmp = 1f;
+    [SerializeField] private float cosTimeScale = 1f;
     private Vector3 circlingVector = Vector3.up;
 
-    [SerializeField] private Transform tail1;
-    [SerializeField] private Transform tail2;
+    [SerializeField] private GameObject tailSegmentPrefab;
+    [SerializeField] private List<Transform> tailTransforms = new List<Transform>();
     [SerializeField] private float tailDistance = 0.45f;
 
     private Transform target;
 
+    /*private void Awake()
+    {
+        if (instance == null)
+            instance = this;
+        else
+            Destroy(gameObject);
+    }*/
     private void Start()
     {
-        tail1.parent = null;
-        tail2.parent = null;
+        foreach (Transform tailTransform in tailTransforms)
+            tailTransform.parent = null;
         circlingVector *= circlingDistance;
     }
     private void Update()
@@ -58,33 +69,56 @@ public class Weapon_SnakeDrone_Scr : MonoBehaviour
 
         return true;
     }
-    private void MoveToTarget(Vector3 moveTo)
+    private void MoveToTarget(Vector3 movementVector)
     {
-        transform.position += Vector3.Normalize(moveTo) * Time.deltaTime * movementSpeed;
-        UpdateTalePosition();
+        transform.position += Vector3.Normalize(movementVector) * Time.deltaTime * movementSpeed;
+        UpdateTailPosition();
     }
     private void CircleAroundTarget()
     {
-        MoveToTarget(target.position - transform.position + circlingVector);
-        circlingVector = Quaternion.AngleAxis(rotationSpeed * Time.deltaTime, Vector3.forward) * circlingVector;
-        Debug.DrawLine(target.position, target.position + circlingVector, Color.red, 0.1f);
-
-        UpdateTalePosition();
+        Vector3 movementVector = target.position - transform.position;
+        if (movementVector.sqrMagnitude <= 1)
+        {
+            MoveToTarget(target.position - transform.position + circlingVector);
+            circlingVector = Quaternion.AngleAxis(rotationSpeed * Time.deltaTime, Vector3.forward) * circlingVector;
+            Debug.DrawLine(target.position, target.position + circlingVector, Color.red, 0.1f);
+        }
+        else
+        {
+            Vector3 perpendicularVector = Vector3.Cross(movementVector, Vector3.back).normalized;
+            float cos = Mathf.Cos(Time.time * cosTimeScale) * cosAmp;
+            MoveToTarget(movementVector + perpendicularVector * cos);
+            Debug.DrawLine(target.position, target.position + perpendicularVector * cos, Color.red, 0.05f);
+        }
     }
-    private void UpdateTalePosition()
+    private void UpdateTailPosition()
     {
-        Vector3 constraintVector;
-        Vector3 difference = tail1.position - transform.position;
-        if (difference.sqrMagnitude > tailDistance*tailDistance)
+        for (int i = 0; i < tailTransforms.Count; i++)
         {
-            constraintVector = Vector3.Normalize(tail1.position - transform.position) * tailDistance;
-            tail1.position = transform.position + constraintVector;
+            if (i == 0)
+                UpdateTailSegment(transform, tailTransforms[i]);
+            else
+                UpdateTailSegment(tailTransforms[i - 1], tailTransforms[i]);
         }
-        difference = tail2.position - tail1.position;
-        if (difference.sqrMagnitude > tailDistance*tailDistance)
+    }
+    private void UpdateTailSegment(Transform firstTransform, Transform secondTransform)
+    {
+        Vector3 difference = secondTransform.position - firstTransform.position;
+        if (difference.sqrMagnitude > tailDistance * tailDistance)
         {
-            constraintVector = Vector3.Normalize(tail2.position - tail1.position) * tailDistance;
-            tail2.position = tail1.position + constraintVector;
+            Vector3 constraintVector = Vector3.Normalize(secondTransform.position - firstTransform.position) * tailDistance;
+            secondTransform.position = firstTransform.position + constraintVector;
         }
+    }
+
+
+    public void AddTailSegments()
+    {
+        GameObject newTailSegment = Instantiate(tailSegmentPrefab, tailTransforms[tailTransforms.Count - 1].position, Quaternion.identity);
+        newTailSegment.transform.localScale = tailTransforms[tailTransforms.Count - 1].localScale;
+        tailTransforms.Add(newTailSegment.transform);
+        newTailSegment = Instantiate(tailSegmentPrefab, tailTransforms[tailTransforms.Count - 1].position, Quaternion.identity);
+        newTailSegment.transform.localScale = tailTransforms[tailTransforms.Count - 1].localScale;
+        tailTransforms.Add(newTailSegment.transform);
     }
 }

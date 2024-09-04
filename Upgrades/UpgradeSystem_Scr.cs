@@ -17,7 +17,11 @@ public class UpgradeSystem_Scr : MonoBehaviour
     [SerializeField] private UI_EXP_Bar_Scr expBarUI;
     [SerializeField] private List<UI_LvlUp_UpgradeOption_Scr> UIlvlUpOptions;
 
-    public List<UpgradeOption_SO> upgradesList = new List<UpgradeOption_SO>(); 
+    public List<UpgradeOption_SO> upgradesList = new List<UpgradeOption_SO>();
+
+    //[SerializeField] private GenericUpgrade_SO genericUpgrade;
+
+    
 
     private void Awake()
     {
@@ -28,6 +32,12 @@ public class UpgradeSystem_Scr : MonoBehaviour
 
         AddUpgradesToList();
     }
+    /*private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.U))
+            genericUpgrade.UpgradeAction();
+    }*/
+
 
     public void AwardEXP(int expAmount)
     {

@@ -2,25 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponCapsule_Scr : MonoBehaviour
+[RequireComponent(typeof(Enemy_Flash_Scr))]
+[RequireComponent(typeof(Enemy_HitEffect_Scr))]
+public class WeaponCapsule_Scr : Enemy_Scr
 {
-    [SerializeField] private float cosAmpMultiplier = 6f;
-    [SerializeField] private float cosTimeMultiplier = 0.2f;
-    [SerializeField] private float sinAmpMultiplier = 0.5f;
-    [SerializeField] private float sinTimeMultiplier = 1f;
-    [SerializeField] private float rotationSpeed = 2f;
+     private float cosAmpMultiplier = 6f;
+     private float cosTimeMultiplier = 0.8f;
+     private float sinAmpMultiplier = 1f;
+     private float sinTimeMultiplier = 4f;
+     private float rotationSpeed = 2f;
+    [SerializeField] private float movementHeight = 3f;
 
-    void Update()
-    {
-        CapsuleMovement();
-    }
-
-    private void CapsuleMovement()
+    protected override void EnemyMovement()
     {
         float xPos = Mathf.Cos(Time.time * cosTimeMultiplier) * cosAmpMultiplier;
-        float yPos = 3 + Mathf.Sin(Time.time * sinTimeMultiplier) * sinAmpMultiplier;
+        float yPos = movementHeight + Mathf.Sin(Time.time * sinTimeMultiplier) * sinAmpMultiplier;
         transform.position = new Vector3(xPos, yPos, 0);
 
         transform.Rotate(0, 0, Time.deltaTime * rotationSpeed);
     }
+    protected override void Die()
+    {
+        NewWeaponMenu_Scr.instance.OpenNewWeaponMenu();
+        base.Die();
+    }
+
 }

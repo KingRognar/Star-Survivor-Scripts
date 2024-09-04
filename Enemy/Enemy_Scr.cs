@@ -45,7 +45,7 @@ public class Enemy_Scr : MonoBehaviour
         if (curHealth <= 0)
             Die();
     }
-   protected virtual void Die()
+    protected virtual void Die()
     {
         UpgradeSystem_Scr.instance.AwardEXP(expAward);
         Disappear();

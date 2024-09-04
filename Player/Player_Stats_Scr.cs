@@ -7,6 +7,8 @@ public class Player_Stats_Scr : MonoBehaviour
 {
     public static Player_Stats_Scr instance;
 
+    private int stat_1 = 1;
+
 
     //TODO: нужно определится с Base Damage и всяким таким или немного поменять систему
 

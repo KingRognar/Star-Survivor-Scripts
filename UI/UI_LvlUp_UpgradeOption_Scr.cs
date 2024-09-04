@@ -6,8 +6,6 @@ using TMPro;
 
 public class UI_LvlUp_UpgradeOption_Scr : MonoBehaviour, IPointerClickHandler
 {
-    public int bonusNum; // TEMP
-    public float bonusAmount = 1.5f; // TEMP
     public UpgradeOption_SO upgradeOptionSO;
 
     [SerializeField] private TMP_Text upgradeNameText;

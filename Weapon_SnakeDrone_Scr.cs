@@ -41,7 +41,7 @@ public class Weapon_SnakeDrone_Scr : MonoBehaviour
     {
 
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        Debug.Log(enemies.Length);
+        //Debug.Log(enemies.Length);
         if (enemies.Length == 0)
             return false;
 

@@ -9,7 +9,7 @@ public class Player_BulletEmitter_Scr : MonoBehaviour
 
     public GameObject bulletPrefab;
     private float bulletSpreadCurAngle = 0f;
-    private bool spreadDirectionIsRight = true;
+    //private bool spreadDirectionIsRight = true;
 
     private float lastBulletSpawnTime = -1f;
     private List<GameObject> bulletsSpawnList = new List<GameObject>();

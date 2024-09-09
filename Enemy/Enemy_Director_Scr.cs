@@ -15,7 +15,7 @@ public class Enemy_Director_Scr : MonoBehaviour
     public static List<Transform> railgunEnemiesList = new List<Transform>();
 
     [SerializeField] private float enemySpawnDelay = 1f;
-    private float lastTimeEnemySpawned = -1f;
+    //private float lastTimeEnemySpawned = -1f;
 
     [SerializeField] private float waveTime = 120f;
     [SerializeField] private int waveNum = 0;
@@ -39,9 +39,10 @@ public class Enemy_Director_Scr : MonoBehaviour
         screenHeight = Camera.main.pixelHeight + 100;
         screenWidth = Camera.main.pixelWidth - 100;
 
-        leftmostPoint = Camera.main.ScreenToWorldPoint(new Vector3(100, screenHeight, 0)).x;
-        rightmostPoint = Camera.main.ScreenToWorldPoint(new Vector3(screenWidth, screenWidth, 0)).x;
-        upperPoint = Camera.main.ScreenToWorldPoint(new Vector3(100, screenHeight, 0)).y;
+        float cameraZPos = Camera.main.transform.position.z;
+        leftmostPoint = Camera.main.ScreenToWorldPoint(new Vector3(100, screenHeight, -cameraZPos)).x;
+        rightmostPoint = Camera.main.ScreenToWorldPoint(new Vector3(screenWidth, screenWidth, -cameraZPos)).x;
+        upperPoint = Camera.main.ScreenToWorldPoint(new Vector3(100, screenHeight, -cameraZPos)).y;
 
         _ = SpawnEnemiesOnTime();
     }

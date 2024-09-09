@@ -32,6 +32,7 @@ public class Weapon_SnakeDrone_Scr : MonoBehaviour
         foreach (Transform tailTransform in tailTransforms)
             tailTransform.parent = null;
         circlingVector *= circlingDistance;
+        rotationSpeed = (movementSpeed * 180) / (Mathf.PI * circlingDistance);
     }
     private void Update()
     {

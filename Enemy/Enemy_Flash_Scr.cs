@@ -11,7 +11,7 @@ public class Enemy_Flash_Scr : MonoBehaviour
     private Material shaderMaterial;
     [SerializeField] private float flashTime = 0.2f;
     [SerializeField] private float fullOpacityDuration = 0.05f;
-    [SerializeField] private float flashOpacity = 1f;
+    //[SerializeField] private float flashOpacity = 1f;
     [SerializeField] private Color flashColor = Color.white;
 
     private CancellationTokenSource cts;

@@ -39,6 +39,10 @@ public class UpgradeSystem_Scr : MonoBehaviour
     }*/
 
 
+    /// <summary>
+    /// Метод начисляющий очки опыта
+    /// </summary>
+    /// <param name="expAmount">Количество добовляемых очков опыта</param>
     public void AwardEXP(int expAmount)
     {
         currentExp += expAmount;
@@ -47,6 +51,9 @@ public class UpgradeSystem_Scr : MonoBehaviour
         if (currentExp >= expForLvl) // TODO: поставить луп и всякое такое, чтобы при избытке опыта можно получить несколько уровней последовательно
             LevelUp();
     }
+    /// <summary>
+    /// Метод, выполняемый при повышении уровня
+    /// </summary>
     private void LevelUp()
     {
         currentExp -= expForLvl;
@@ -55,6 +62,9 @@ public class UpgradeSystem_Scr : MonoBehaviour
         OpenLvlUpMenu();
     }
 
+    /// <summary>
+    /// Метод, открывающий меню выбора улучшений
+    /// </summary>
     private void OpenLvlUpMenu()
     {
         if (upgradesList.Count == 0)
@@ -80,6 +90,9 @@ public class UpgradeSystem_Scr : MonoBehaviour
             i++;
         }
     }
+    /// <summary>
+    /// Метод, закрывающий меню выбора улучшений
+    /// </summary>
     public void CloseLvlUpMenu()
     {
         Time.timeScale = 1;

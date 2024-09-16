@@ -13,8 +13,6 @@ public class Enemy_HitParticles_Scr : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
 
-    //TODO: сделать цвет осколков завис€щим от противника
-
     private void Awake()
     {
         Initialize();

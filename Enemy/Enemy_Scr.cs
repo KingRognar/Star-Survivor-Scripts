@@ -34,6 +34,11 @@ public class Enemy_Scr : MonoBehaviour
         TakeDamage(Player_Stats_Scr.Machinegun.bulletDamage, collision.transform.position); // TODO: изменить в зависимости от снаряда
     }
 
+    /// <summary>
+    /// Метод для получения врагом урона
+    /// </summary>
+    /// <param name="damage">Количесвто полученного урона</param>
+    /// <param name="dmgTakenFromPos">Позиция с которой был нанесён урон</param>
     public void TakeDamage(int damage, Vector3 dmgTakenFromPos)
     {
         curHealth -= damage;
@@ -45,20 +50,34 @@ public class Enemy_Scr : MonoBehaviour
         if (curHealth <= 0)
             Die();
     }
+    /// <summary>
+    /// Метод, вызываемый при смерти врага
+    /// </summary>
     protected virtual void Die()
     {
+        DebriesMaker_Scr.instance.ExplodeOnPos(transform.position);
         UpgradeSystem_Scr.instance.AwardEXP(expAward);
         Disappear();
     }
+    /// <summary>
+    /// Метод для удаления объекта врага
+    /// </summary>
     protected void Disappear()
     {
         Destroy(gameObject);
     }
+    /// <summary>
+    /// Метод, отталкивающий врага при получении урона, на расстояние зависящее от его макс. ХП и полученного урона
+    /// </summary>
+    /// <param name="damage">Полученный урон</param>
     protected virtual void Pushback(int damage)
     {
         transform.position += Vector3.up * ((float)damage / maxHealth);
     }
 
+    /// <summary>
+    /// Метод, выполняющий передвижения врага
+    /// </summary>
     protected virtual void EnemyMovement()
     {
         transform.position += -transform.up * Time.deltaTime * movementSpeed;

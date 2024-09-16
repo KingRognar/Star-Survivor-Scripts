@@ -17,8 +17,6 @@ public class Gun_ChainLightning_Scr : MonoBehaviour
     [SerializeField] private float chainMaxDistance = 1.5f;
 
     //TODO: добавить звуковой эффект молнии
-    //TODO: Искать нового врага только после исчезания старой части цепи
-    //TODO: сделать маску для рейкаста, чтоб хватал только врагов
 
     void Update()
     {

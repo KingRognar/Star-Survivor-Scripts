@@ -10,18 +10,38 @@ public class GenericUpgrade_SO : ScriptableObject
 {
     [SerializeField] private string stat1Name;
     [SerializeField] private int stat1ValueChange;
-    public UnityEvent upgradeEvent = new UnityEvent();
-    private UnityAction newAction;
+    [HideInInspector] public MonoBehaviour WeaponScript;
+    [SerializeField] private string methodName; 
+
+    //public UnityEvent upgradeEvent = new UnityEvent();
+    //private UnityAction newAction;
 
     public void UpgradeAction()
     {
         //newAction = new UnityAction(Weapon_SnakeDrone_Scr.instance.AddTailSegments);
-        upgradeEvent.AddListener(newAction);
+        //upgradeEvent.AddListener(newAction);
 
-        Type type = Player_Stats_Scr.instance.GetType();
-        FieldInfo field = type.GetField(stat1Name, BindingFlags.NonPublic | BindingFlags.Instance);
-        Debug.Log(stat1Name + " value is " + field.GetValue(Player_Stats_Scr.instance));
+        //Type playerType = Player_Stats_Scr.instance.GetType();
+        //FieldInfo field = playerType.GetField(stat1Name, BindingFlags.NonPublic | BindingFlags.Instance);
+        //Debug.Log(stat1Name + " value is " + field.GetValue(Player_Stats_Scr.instance));
 
-        upgradeEvent.Invoke();
+        if (WeaponScript != null)
+        {
+            Debug.Log(WeaponScript.name + " is assigned");
+        }
+        else
+            Debug.Log(WeaponScript.name + " is not assigned");
+
+        Type gameObjectType = WeaponScript.GetType();
+        MethodInfo method = gameObjectType.GetMethod(methodName);
+        if (method != null)
+        {
+            method.Invoke(WeaponScript, new object[] { stat1ValueChange });
+            Debug.Log(methodName + " is found and invoked");
+        }
+        else
+            Debug.Log(methodName + " is not found");
+
+        //upgradeEvent.Invoke();
     }
 }

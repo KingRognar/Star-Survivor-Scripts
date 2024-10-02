@@ -16,14 +16,24 @@ public class Gun_ChainLightning_Scr : MonoBehaviour
     [SerializeField] private int chainsCount = 4;
     [SerializeField] private float chainMaxDistance = 1.5f;
 
+    [SerializeField] public GenericUpgrade_SO upgrade_SO;
+
     //TODO: добавить звуковой эффект молнии
 
+    private void Start()
+    {
+        upgrade_SO.WeaponScript = this;
+    }
     void Update()
     {
         if (Input.GetKey(KeyCode.Mouse0) && (lastBulletSpawnTime + Player_Stats_Scr.Machinegun.bulletSpawnDelay < Time.time))
         {
             SpawnProjectile();
             lastBulletSpawnTime = Time.time;
+        }
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            upgrade_SO.UpgradeAction();
         }
     }
 
@@ -114,5 +124,10 @@ public class Gun_ChainLightning_Scr : MonoBehaviour
             curTime += Time.deltaTime;
             await Task.Yield();
         }
+    }
+
+    public void IncreaseChainDistance(float distanceIncrease)
+    {
+        chainMaxDistance += distanceIncrease;
     }
 }

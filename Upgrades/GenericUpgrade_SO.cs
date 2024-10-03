@@ -8,10 +8,15 @@ using UnityEngine.Events;
 [CreateAssetMenu(fileName = "New Upgrade", menuName = "Scriptable Objects/New Upgrade", order = 3)]
 public class GenericUpgrade_SO : ScriptableObject
 {
-    [SerializeField] private string stat1Name;
-    [SerializeField] private int stat1ValueChange;
+    public string upgradeName;
+    public string upgradeDescription;
+    //[SerializeField] private string stat1Name;
+    [SerializeField] private float stat1ValueChange;
     [HideInInspector] public MonoBehaviour WeaponScript;
-    [SerializeField] private string methodName; 
+    [SerializeField] private string methodName;
+
+    [Space(20)]
+    public List<GenericUpgrade_SO> nextUpgrades;
 
     //public UnityEvent upgradeEvent = new UnityEvent();
     //private UnityAction newAction;

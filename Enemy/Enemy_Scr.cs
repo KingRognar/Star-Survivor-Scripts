@@ -31,7 +31,7 @@ public class Enemy_Scr : MonoBehaviour
             return;
 
         
-        TakeDamage(Player_Stats_Scr.Machinegun.bulletDamage, collision.transform.position); // TODO: изменить в зависимости от снаряда
+        TakeDamage(Player_Stats_Scr.Machinegun.damage, collision.transform.position); // TODO: изменить в зависимости от снаряда
     }
 
     /// <summary>

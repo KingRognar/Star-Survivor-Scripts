@@ -23,7 +23,6 @@ public class UI_NewWeaponOption_Scr : MonoBehaviour, IPointerClickHandler
 
 
         NewWeaponMenu_Scr.instance.weapon_SOs.Remove(weapon_SO);
-        UpgradeSystem_Scr.instance.upgradesList.AddRange(weapon_SO.weaponStartingUpgrades);
 
         NewWeaponMenu_Scr.instance.CloseNewWeaponMenu();
     }

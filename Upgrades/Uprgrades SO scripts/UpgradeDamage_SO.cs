@@ -13,6 +13,6 @@ public class UpgradeDamage_SO : UpgradeOption_SO
         damageMultiplierIncrease = value_1;
         bulletScaleIncrease = value_2;
         Player_Stats_Scr.Ship.damageMultiplier += damageMultiplierIncrease;
-        Player_Stats_Scr.Machinegun.bulletScale += bulletScaleIncrease;
+        Player_Stats_Scr.Machinegun.projectileScale += bulletScaleIncrease;
     }
 }

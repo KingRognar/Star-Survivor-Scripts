@@ -2,9 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Weapon_CircleBots_Scr : MonoBehaviour
+public class Weapon_CircleBots_Scr : Weapon_Scr
 {
-    private float rotationSpeed = 100f;
     private float lastBulletSpawnTime = 0f;
     private int nextBotToShoot = 0;
 
@@ -13,10 +12,10 @@ public class Weapon_CircleBots_Scr : MonoBehaviour
     private List<Transform> botsTransforms = new List<Transform>();
     private int curBotsCount;
 
-
-    private void Start()
+    protected override void Start()
     {
-        //bots.AddRange(gameObject.GetComponentsInChildren<Weapon_CircleBot_Scr>());
+        base.Start();
+
         curBotsCount = transform.childCount;
         for (int i = 0; i < transform.childCount; i++)
         {
@@ -26,9 +25,9 @@ public class Weapon_CircleBots_Scr : MonoBehaviour
     }
     private void Update()
     {
-        transform.Rotate(transform.forward, rotationSpeed * Time.deltaTime, Space.Self);
+        transform.Rotate(transform.forward, -Player_Stats_Scr.CircleBots.rotationSpeed * Time.deltaTime, Space.Self);
 
-        if (lastBulletSpawnTime + Player_Stats_Scr.CircleBotsStats.bulletSpawnDelay / curBotsCount < Time.time)
+        if (lastBulletSpawnTime + Player_Stats_Scr.CircleBots.bulletSpawnDelay / curBotsCount < Time.time)
         {
             SpawnBullet();
             lastBulletSpawnTime = Time.time;
@@ -46,14 +45,33 @@ public class Weapon_CircleBots_Scr : MonoBehaviour
     {
         for (int i = 0; i < curBotsCount; i++)
         {
-            botsTransforms[i].localPosition = Quaternion.AngleAxis(360 / curBotsCount * i, Vector3.forward) * Vector3.right;
+            botsTransforms[i].localPosition = Quaternion.AngleAxis(360 / curBotsCount * i, Vector3.forward) * Vector3.right * Player_Stats_Scr.CircleBots.circlingDistance;
             botsTransforms[i].rotation = Quaternion.identity;
         }
     }
-    public void AddBots(int numOfBotsToAdd)
+
+
+    //// Upgrade Methods
+    public void AddBots(float numOfBotsToAdd)
     {
-        botsTransforms.Add(Instantiate(circleBotPrefab, transform).transform);
-        curBotsCount++;
+        for (int i = 0; i < numOfBotsToAdd; i++)
+        {
+            botsTransforms.Add(Instantiate(circleBotPrefab, transform).transform);
+            curBotsCount++;
+        }
         UpdateBotsRadialPositions();
+    }
+    public void IncreaseCirclingRadius(float radiusIncrease)
+    {
+        Player_Stats_Scr.CircleBots.circlingDistance += radiusIncrease;
+        UpdateBotsRadialPositions();
+    }
+    public void IncreaseRotationSpeed(float speedIncrease)
+    {
+        Player_Stats_Scr.CircleBots.rotationSpeed += speedIncrease;
+    }
+    public void DecreaseShotDelay(float delayDecrease)
+    {
+        Player_Stats_Scr.CircleBots.bulletSpawnDelay -= delayDecrease;
     }
 }

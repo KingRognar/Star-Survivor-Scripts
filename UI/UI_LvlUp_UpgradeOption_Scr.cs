@@ -6,7 +6,8 @@ using TMPro;
 
 public class UI_LvlUp_UpgradeOption_Scr : MonoBehaviour, IPointerClickHandler
 {
-    public UpgradeOption_SO upgradeOptionSO;
+    //public UpgradeOption_SO upgradeOptionSO;
+    public GenericUpgrade_SO upgrade_SO;
 
     [SerializeField] private TMP_Text upgradeNameText;
     [SerializeField] private TMP_Text upgradeDescriptionText;
@@ -16,16 +17,27 @@ public class UI_LvlUp_UpgradeOption_Scr : MonoBehaviour, IPointerClickHandler
         //Output to console the clicked GameObject's name and the following message. You can replace this with your own actions for when clicking the GameObject.
         //Debug.Log("You chose " + upgradeOptionSO.upgradeName);
 
-        upgradeOptionSO.UpgradeAction();
-        UpgradeSystem_Scr.instance.upgradesList.AddRange(upgradeOptionSO.nextUpgrades);
-        UpgradeSystem_Scr.instance.upgradesList.Remove(upgradeOptionSO);
+        //upgradeOptionSO.UpgradeAction();
+        //UpgradeSystem_Scr.instance.upgradesList.AddRange(upgradeOptionSO.nextUpgrades);
+        //UpgradeSystem_Scr.instance.upgradesList.Remove(upgradeOptionSO);
+
+        upgrade_SO.UpgradeAction();
+        if (upgrade_SO.nextUpgrades.Count != 0)
+        {
+            foreach (GenericUpgrade_SO upgrade in upgrade_SO.nextUpgrades)
+            {
+                upgrade.WeaponScript = upgrade_SO.WeaponScript;
+            }
+            UpgradeSystem_Scr.instance.upgradesList.AddRange(upgrade_SO.nextUpgrades);
+        }
+        UpgradeSystem_Scr.instance.upgradesList.Remove(upgrade_SO);
 
         UpgradeSystem_Scr.instance.CloseLvlUpMenu();
     }
 
     public void UpdateVisuals()
     {
-        upgradeDescriptionText.text = string.Format(upgradeOptionSO.upgradeDesription, upgradeOptionSO.value_1, upgradeOptionSO.value_2, upgradeOptionSO.value_3);
-        upgradeNameText.text = upgradeOptionSO.upgradeName;
+        upgradeDescriptionText.text = upgrade_SO.upgradeDescription;
+        upgradeNameText.text = upgrade_SO.upgradeName;
     }
 }

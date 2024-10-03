@@ -17,7 +17,8 @@ public class UpgradeSystem_Scr : MonoBehaviour
     [SerializeField] private UI_EXP_Bar_Scr expBarUI;
     [SerializeField] private List<UI_LvlUp_UpgradeOption_Scr> UIlvlUpOptions;
 
-    public List<UpgradeOption_SO> upgradesList = new List<UpgradeOption_SO>();
+    //public List<UpgradeOption_SO> upgradesList = new List<UpgradeOption_SO>();
+    public List<GenericUpgrade_SO> upgradesList = new List<GenericUpgrade_SO>();
 
     //[SerializeField] private GenericUpgrade_SO genericUpgrade;
 
@@ -82,7 +83,7 @@ public class UpgradeSystem_Scr : MonoBehaviour
         while (i < 3)
         {
             int num = UnityEngine.Random.Range(0, upgradesList.Count);
-            UIlvlUpOptions[i].upgradeOptionSO = upgradesList[num];
+            UIlvlUpOptions[i].upgrade_SO = upgradesList[num];
             UIlvlUpOptions[i].UpdateVisuals();
             if (i + 1 > cnt)
                 UIlvlUpOptions[i].gameObject.SetActive(false);

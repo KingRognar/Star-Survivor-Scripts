@@ -5,35 +5,22 @@ using Unity.Burst.CompilerServices;
 using UnityEngine;
 
 
-public class Gun_ChainLightning_Scr : MonoBehaviour
+public class Gun_ChainLightning_Scr : Weapon_Scr
 {
      
 
     public GameObject projectilePrefab;
 
-    private float lastBulletSpawnTime = -1f;
-    [SerializeField] private int damage = 3;
-    [SerializeField] private int chainsCount = 4;
-    [SerializeField] private float chainMaxDistance = 1.5f;
-
-    [SerializeField] public GenericUpgrade_SO upgrade_SO;
+    private float lastSpawnTime = -1f;
 
     //TODO: добавить звуковой эффект молнии
 
-    private void Start()
-    {
-        upgrade_SO.WeaponScript = this;
-    }
     void Update()
     {
-        if (Input.GetKey(KeyCode.Mouse0) && (lastBulletSpawnTime + Player_Stats_Scr.Machinegun.bulletSpawnDelay < Time.time))
+        if (Input.GetKey(KeyCode.Mouse0) && (lastSpawnTime + Player_Stats_Scr.ChainLightningGun.spawnDelay < Time.time))
         {
             SpawnProjectile();
-            lastBulletSpawnTime = Time.time;
-        }
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            upgrade_SO.UpgradeAction();
+            lastSpawnTime = Time.time;
         }
     }
 
@@ -64,16 +51,16 @@ public class Gun_ChainLightning_Scr : MonoBehaviour
             hitPositions.Add(transform.position);
             hitPositions.Add(transformHitList[0].position);
 
-            transformHitList[0].GetComponent<Enemy_Scr>().TakeDamage(damage, hitPositions[0]);
+            transformHitList[0].GetComponent<Enemy_Scr>().TakeDamage((int)(Player_Stats_Scr.ChainLightningGun.baseDamage * Player_Stats_Scr.ChainLightningGun.damageMultiplier), hitPositions[0]);
             await ChainVisuals(projLineRenderer, hitPositions[0], hitPositions[1]);
             
 
             bool addedNewChain = true;
             int i = 1;
-            while (i < chainsCount && addedNewChain)
+            while (i < Player_Stats_Scr.ChainLightningGun.chainsCount && addedNewChain)
             {
                 addedNewChain = false;
-                hits = Physics2D.CircleCastAll(hitPositions[i], chainMaxDistance, Vector2.up, 0.01f, 1 << 8);
+                hits = Physics2D.CircleCastAll(hitPositions[i], Player_Stats_Scr.ChainLightningGun.chainDistance, Vector2.up, 0.01f, 1 << 8);
 
                 foreach (RaycastHit2D hit in hits)
                 {
@@ -90,7 +77,7 @@ public class Gun_ChainLightning_Scr : MonoBehaviour
 
                 if (addedNewChain)
                 {
-                    transformHitList[i].GetComponent<Enemy_Scr>().TakeDamage(damage, hitPositions[i]);
+                    transformHitList[i].GetComponent<Enemy_Scr>().TakeDamage(Player_Stats_Scr.ChainLightningGun.baseDamage, hitPositions[i]);
                     await ChainVisuals(projLineRenderer, hitPositions[i], hitPositions[i + 1]);
                 }
 
@@ -126,8 +113,18 @@ public class Gun_ChainLightning_Scr : MonoBehaviour
         }
     }
 
+
+    //// Upgrade Methods
     public void IncreaseChainDistance(float distanceIncrease)
     {
-        chainMaxDistance += distanceIncrease;
+        Player_Stats_Scr.ChainLightningGun.chainDistance += distanceIncrease;
+    }
+    public void IncreaseChainCount(float chainCountIncrease)
+    {
+        Player_Stats_Scr.ChainLightningGun.chainsCount += (int)chainCountIncrease;
+    }
+    public void IncreaseDamageMultiplier(float multiplierIncrease)
+    {
+        Player_Stats_Scr.ChainLightningGun.damageMultiplier += multiplierIncrease;
     }
 }

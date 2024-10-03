@@ -32,7 +32,7 @@ public class Player_Stats_Scr : MonoBehaviour
             {
                 damageMultiplier_ = value;
 
-                Machinegun.bulletDamage = (int)(Machinegun.bulletDamage * damageMultiplier_);
+                Machinegun.damage = (int)(Machinegun.damage * damageMultiplier_);
                 //Debug.Log(Machinegun.bulletDamage + " | " + damageMultiplier_);
             }
 
@@ -44,8 +44,8 @@ public class Player_Stats_Scr : MonoBehaviour
             set
             {
                 firerateMultiplier_ = value;
-                Machinegun.bulletSpawnDelay = Machinegun.bulletSpawnDelay * firerateMultiplier_;
-                CircleBotsStats.bulletSpawnDelay = CircleBotsStats.bulletSpawnDelay * firerateMultiplier_;
+                Machinegun.spawnDelay = Machinegun.spawnDelay * firerateMultiplier_;
+                CircleBots.bulletSpawnDelay = CircleBots.bulletSpawnDelay * firerateMultiplier_;
             }
         }
         private static float firerateMultiplier_ = 1f;
@@ -53,19 +53,28 @@ public class Player_Stats_Scr : MonoBehaviour
 
     public static class Machinegun
     {
-        public static float bulletSpawnDelay = 0.5f;
-        public static float bulletSpreadAngle = 5f;
-        public static int bulletDamage = 5;
-        public static float bulletScale = 1f;
+        public static float spawnDelay = 0.5f;
+        public static float spreadAngle = 5f;
+        public static int damage = 5;
+        public static float projectileScale = 1f;
     }
-    public static class CircleBotsStats
+    public static class CircleBots
     {
         public static float bulletSpawnDelay = 2f;
         public static int bulletDamage = 5;
         public static int botsCount = 3;
-        public static float botsRotationSpeed = 1f;
+        public static float rotationSpeed = 100f;
+        public static float circlingDistance = 1f;
         //public Vector3 circleCenter;
         //public bool allBotsIsFiring;
+    }
+    public static class ChainLightningGun
+    {
+        public static float spawnDelay = 0.5f;
+        public static int baseDamage = 3;
+        public static float damageMultiplier = 1f;
+        public static int chainsCount = 4;
+        public static float chainDistance = 1.5f;
     }
 }
 

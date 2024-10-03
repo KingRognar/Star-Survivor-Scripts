@@ -4,10 +4,8 @@ using UnityEngine;
 
 public class Weapon_CircleBot_Scr : MonoBehaviour
 {
-    [SerializeField] private float rotationSpeed = 100f;
-
     void Update()
     {
-        transform.Rotate(transform.forward, -rotationSpeed * Time.deltaTime, Space.Self);
+        transform.Rotate(transform.forward, Player_Stats_Scr.CircleBots.rotationSpeed * Time.deltaTime, Space.Self);
     }
 }

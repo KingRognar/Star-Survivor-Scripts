@@ -79,14 +79,21 @@ public class UpgradeSystem_Scr : MonoBehaviour
         if (upgradesList.Count < 3)
             cnt = upgradesList.Count;
 
+        List<GenericUpgrade_SO> selectUpgrades = SelectSample(upgradesList, cnt);
         int i = 0;
         while (i < 3)
         {
-            int num = UnityEngine.Random.Range(0, upgradesList.Count);
-            UIlvlUpOptions[i].upgrade_SO = upgradesList[num];
-            UIlvlUpOptions[i].UpdateVisuals();
             if (i + 1 > cnt)
+            {
                 UIlvlUpOptions[i].gameObject.SetActive(false);
+                continue;
+            }
+
+            //int num = UnityEngine.Random.Range(0, upgradesList.Count);
+            UIlvlUpOptions[i].gameObject.SetActive(true);
+            UIlvlUpOptions[i].upgrade_SO = selectUpgrades[i];
+            UIlvlUpOptions[i].UpdateVisuals();
+
 
             i++;
         }
@@ -109,5 +116,25 @@ public class UpgradeSystem_Scr : MonoBehaviour
         upgradesList.Add(IncreasePlayerSpread);
         upgradesList.Add(IncreasePlayerHP);
         upgradesList.Add(IncreasePlayerArmor);*/
+    }
+    private List<GenericUpgrade_SO> SelectSample(List<GenericUpgrade_SO> transformsList, int numberOfSamples)
+    {
+        List<GenericUpgrade_SO> samples = new List<GenericUpgrade_SO>();
+        int itemsLeft = transformsList.Count;
+        int i = 0;
+        int samplesTaken = 0;
+
+        while (samplesTaken < numberOfSamples && i < transformsList.Count)
+        {
+            int rnd = UnityEngine.Random.Range(1, itemsLeft - i + 1);
+            if (rnd <= (numberOfSamples - samplesTaken))
+            {
+                samples.Add(transformsList[i]);
+                samplesTaken++;
+            }
+            i++;
+        }
+
+        return samples;
     }
 }

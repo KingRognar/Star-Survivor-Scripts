@@ -55,7 +55,7 @@ public class Enemy_Railgunner_Scr : Enemy_Scr
         float totalAdjustDistance = 0f;
         foreach (Transform railgunner in Enemy_Director_Scr.railgunEnemiesList)
         {
-            if (railgunner == transform)
+            if (railgunner == null || railgunner == transform)
                 continue;
             float distance = Vector2.SqrMagnitude(transform.position - railgunner.position);
             float sqrAvoidance = avoidanceDistance * avoidanceDistance;

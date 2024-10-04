@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
 
-[CreateAssetMenu(fileName = "Upgrade CircleBots Number", menuName = "Scriptable Objects/Upgrade CircleBots Number", order = 1)]
+//[CreateAssetMenu(fileName = "Upgrade CircleBots Number", menuName = "Scriptable Objects/Upgrade CircleBots Number", order = 1)]
 public class UpgradeCircleBotsNumber_SO : UpgradeOption_SO
 {
     int numberOfBotsToAdd;

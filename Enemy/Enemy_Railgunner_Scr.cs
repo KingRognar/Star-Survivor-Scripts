@@ -40,7 +40,7 @@ public class Enemy_Railgunner_Scr : Enemy_Scr
         {
             lastShotTime += timeBetweenShots;
 
-            _ = ShootRail();
+            EnemyAttack();
         }
     }
 
@@ -74,11 +74,11 @@ public class Enemy_Railgunner_Scr : Enemy_Scr
         Transform newRail;
         if (shootFromRightSpawnPoint)
         {
-            newRail = Instantiate(railPrefab, railSpawnPoint1.position, Quaternion.identity, transform).transform;
+            newRail = Instantiate(railPrefab, railSpawnPoint1.position, Quaternion.Euler(0, 0, 180), transform).transform;
             shootFromRightSpawnPoint = !shootFromRightSpawnPoint;
         } else
         {
-            newRail = Instantiate(railPrefab, railSpawnPoint2.position, Quaternion.identity, transform).transform;
+            newRail = Instantiate(railPrefab, railSpawnPoint2.position, Quaternion.Euler(0, 0, 180), transform).transform;
             shootFromRightSpawnPoint = !shootFromRightSpawnPoint;
         }
 
@@ -98,6 +98,10 @@ public class Enemy_Railgunner_Scr : Enemy_Scr
         }
 
         newRail.GetComponent<Enemy_RailProj_Scr>().startGlow();
+    }
+    protected override void EnemyAttack()
+    {
+        _ = ShootRail();
     }
 
     protected override void Die()

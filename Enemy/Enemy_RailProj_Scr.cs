@@ -19,7 +19,8 @@ public class Enemy_RailProj_Scr : Enemy_BaseProj_Scr
         spriteRenderer = GetComponent<SpriteRenderer>();
         shaderMaterial = spriteRenderer.material;
     }
-    private void Update()
+
+    protected override void Update()
     {
         if (isGlowStarted && !isMovementStarted)
             RiseGlowIntensity();

@@ -82,6 +82,10 @@ public class Enemy_Scr : MonoBehaviour
     {
         transform.position += -transform.up * Time.deltaTime * movementSpeed;
     }
+    protected virtual void EnemyAttack()
+    {
+
+    }
 
     private void OnBecameVisible()
     {

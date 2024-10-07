@@ -30,12 +30,12 @@ public class GenericUpgrade_SO : ScriptableObject
         //FieldInfo field = playerType.GetField(stat1Name, BindingFlags.NonPublic | BindingFlags.Instance);
         //Debug.Log(stat1Name + " value is " + field.GetValue(Player_Stats_Scr.instance));
 
-        if (WeaponScript != null)
+        /*if (WeaponScript != null)
         {
             Debug.Log(WeaponScript.name + " is assigned");
         }
         else
-            Debug.Log(WeaponScript.name + " is not assigned");
+            Debug.Log(WeaponScript.name + " is not assigned");*/
 
         Type gameObjectType = WeaponScript.GetType();
         MethodInfo method = gameObjectType.GetMethod(methodName);

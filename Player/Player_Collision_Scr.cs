@@ -12,8 +12,10 @@ public class Player_Collision_Scr : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy"))
             TakeDamage(2);
         if (collision.gameObject.CompareTag("Enemy_Proj"))
+        {
             TakeDamage(collision.gameObject.GetComponent<Enemy_BaseProj_Scr>().projDamage);
-
+            Destroy(collision.gameObject);
+        }
     }
 
     private void TakeDamage(int damage)

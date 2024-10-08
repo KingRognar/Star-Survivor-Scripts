@@ -13,6 +13,7 @@ public class Enemy_Herder_Scr : Enemy_Scr
     [SerializeField] private float timeToChangeMode = 10f; private float nextModeTime;
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private float attackDelay = 0.45f; private float nextAttackTime = 0;
+    private Vector3 positionToMove, oldPosition;
 
     protected override void Awake()
     {
@@ -23,6 +24,7 @@ public class Enemy_Herder_Scr : Enemy_Scr
     {
         GetChildrenTransforms();
         ArrangeHerd();
+        GetNewMovePosition();
     }
 
     protected override void EnemyMovement()
@@ -35,10 +37,10 @@ public class Enemy_Herder_Scr : Enemy_Scr
         if (Time.time < timeToStop)
             MoveHerdToNewPositions();
 
-        if (!inDefenceMode)
+        if (inDefenceMode)
+            MoveToNewPosition();
+        else
             EnemyAttack();
-
-        MoveToNewPosition();
         //base.EnemyMovement();
     }
     protected override void EnemyAttack()
@@ -56,7 +58,13 @@ public class Enemy_Herder_Scr : Enemy_Scr
 
     private void MoveToNewPosition()
     {
-        //TODO:
+        //transform.position = Vector3.MoveTowards(transform.position, positionToMove, movementSpeed * Time.deltaTime);
+        transform.position = Vector3.Lerp(oldPosition, positionToMove, (Time.time - startTime) / timeToChangeMode);
+    }
+    private void GetNewMovePosition()
+    {
+        positionToMove = Camera.main.GetRandomPointFromScreen(50, 50);
+        oldPosition = transform.position;
     }
     private void MoveHerdToNewPositions()
     {
@@ -83,6 +91,7 @@ public class Enemy_Herder_Scr : Enemy_Scr
         }
         else
         {
+            GetNewMovePosition();
             inDefenceMode = true;
             ArrangeHerdInCircle();
         }

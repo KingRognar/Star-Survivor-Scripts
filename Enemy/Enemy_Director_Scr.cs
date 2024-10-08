@@ -120,7 +120,8 @@ public class Enemy_Director_Scr : MonoBehaviour
 
     private GameObject SpawnRandomOnLane(GameObject enemyPrefab)
     {
-        return Instantiate(enemyPrefab, new Vector3(Random.Range(leftmostPoint, rightmostPoint), upperPoint, 0), Quaternion.identity);
+        //return Instantiate(enemyPrefab, new Vector3(Random.Range(leftmostPoint, rightmostPoint), upperPoint, 0), Quaternion.identity);
+        return Instantiate(enemyPrefab, Camera.main.GetRandomPointOnHorizontalLine(50, Camera.main.pixelWidth + 100), Quaternion.identity);
     }
     private GameObject SpawnOnUpperCorner(GameObject enemyPrefab, bool spawnFromRightCorner)
     {

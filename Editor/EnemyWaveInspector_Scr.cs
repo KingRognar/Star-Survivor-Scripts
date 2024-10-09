@@ -18,6 +18,7 @@ public class EnemyWaveInspector_Scr : Editor
     {
         serializedObject.Update();
 
+        CheckElements();
 
         var style = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter };
 
@@ -26,7 +27,9 @@ public class EnemyWaveInspector_Scr : Editor
         EditorGUILayout.Space(20f);
 
         SerializedProperty enemy = serializedObject.FindProperty("enemiesList");
-        SerializedProperty enemyNum = serializedObject.FindProperty("numberOfEnmemiesPerType");
+        SerializedProperty enemyNum = serializedObject.FindProperty("totalEnemies");
+        SerializedProperty enemySpawn = serializedObject.FindProperty("spawnMethod");
+        SerializedProperty spawnDelay = serializedObject.FindProperty("spawnDelay");
         count = enemy.arraySize;
 
         //---// Кнопки для расширения\сокращения списка
@@ -45,6 +48,7 @@ public class EnemyWaveInspector_Scr : Editor
             RemoveElements();
         }
         EditorGUILayout.EndHorizontal();
+        EditorGUILayout.Space(10f);
 
         //---// Список Врагов и их количество
         for (int i = 0; i < count; i++)
@@ -52,32 +56,78 @@ public class EnemyWaveInspector_Scr : Editor
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PropertyField(enemy.GetArrayElementAtIndex(i), GUIContent.none);
             EditorGUILayout.PropertyField(enemyNum.GetArrayElementAtIndex(i), GUIContent.none);
+            EditorGUILayout.PropertyField(enemySpawn.GetArrayElementAtIndex(i), GUIContent.none);
+            EditorGUILayout.PropertyField(spawnDelay.GetArrayElementAtIndex(i), GUIContent.none);
             EditorGUILayout.EndHorizontal();
         }
 
         //EditorGUILayout.PropertyField(enemy);
         //EditorGUILayout.PropertyField(enemyNum);
 
-
         serializedObject.ApplyModifiedProperties();
     }
 
     void AddElements()
     {
+        CheckElements();
         SerializedProperty enemy = serializedObject.FindProperty("enemiesList");
-        SerializedProperty enemyNum = serializedObject.FindProperty("numberOfEnmemiesPerType");
+        SerializedProperty enemyNum = serializedObject.FindProperty("totalEnemies");
+        SerializedProperty enemySpawn = serializedObject.FindProperty("spawnMethod");
+        SerializedProperty spawnDelay = serializedObject.FindProperty("spawnDelay");
+
         enemy.arraySize++;
         enemyNum.arraySize++;
-        count++;
+        enemySpawn.arraySize++;
+        spawnDelay.arraySize++;
+
+        count = enemy.arraySize;
     }
     void RemoveElements()
     {
+        CheckElements();
         SerializedProperty enemy = serializedObject.FindProperty("enemiesList");
-        SerializedProperty enemyNum = serializedObject.FindProperty("numberOfEnmemiesPerType");
+        SerializedProperty enemyNum = serializedObject.FindProperty("totalEnemies");
+        SerializedProperty enemySpawn = serializedObject.FindProperty("spawnMethod");
+        SerializedProperty spawnDelay = serializedObject.FindProperty("spawnDelay");
+
         if (enemy.arraySize > 0)
-        enemy.arraySize--;
+            enemy.arraySize--;
         if (enemyNum.arraySize > 0)
-        enemyNum.arraySize--;
-        count = Mathf.Max(enemy.arraySize, enemyNum.arraySize);
+            enemyNum.arraySize--;
+        if (enemySpawn.arraySize > 0)
+            enemySpawn.arraySize--;
+        if (spawnDelay.arraySize > 0)
+            spawnDelay.arraySize--;
+
+        count = enemy.arraySize;
+    }
+    void CheckElements()
+    {
+        SerializedProperty enemy = serializedObject.FindProperty("enemiesList");
+        SerializedProperty enemyNum = serializedObject.FindProperty("totalEnemies");
+        SerializedProperty enemySpawn = serializedObject.FindProperty("spawnMethod");
+        SerializedProperty spawnDelay = serializedObject.FindProperty("spawnDelay");
+
+        while (enemy.arraySize != enemyNum.arraySize)
+        {
+            if (enemyNum.arraySize > enemy.arraySize)
+                enemyNum.arraySize--;
+            else
+                enemyNum.arraySize++;
+        }
+        while (enemy.arraySize != enemySpawn.arraySize)
+        {
+            if (enemySpawn.arraySize > enemy.arraySize)
+                enemySpawn.arraySize--;
+            else
+                enemySpawn.arraySize++;
+        }
+        while (enemy.arraySize != spawnDelay.arraySize)
+        {
+            if (spawnDelay.arraySize > enemy.arraySize)
+                spawnDelay.arraySize--;
+            else
+                spawnDelay.arraySize++;
+        }
     }
 }

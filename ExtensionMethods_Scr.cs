@@ -21,4 +21,18 @@ public static class ExtensionMethods_Scr
             Random.Range(0 + widthPadding, screenWidth - widthPadding),
             lineHeight, -camera.transform.position.z));
     }
+
+    public static float GetHeightInWorld(this Camera camera)
+    {
+        return camera.ScreenToViewportPoint(new Vector3(0, camera.pixelHeight, -camera.transform.position.z)).y;
+    }
+
+    public static Vector3 GetUpperLeftCorner(this Camera camera)
+    {
+        return camera.ScreenToViewportPoint(new Vector3(0, camera.pixelHeight, -camera.transform.position.z));
+    }
+    public static Vector3 GetBottomLeftCorner(this Camera camera)
+    {
+        return camera.ScreenToViewportPoint(new Vector3(0, 0, -camera.transform.position.z));
+    }
 }

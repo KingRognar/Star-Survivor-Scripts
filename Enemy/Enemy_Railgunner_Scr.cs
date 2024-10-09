@@ -7,6 +7,8 @@ using static UnityEngine.UI.ScrollRect;
 
 public class Enemy_Railgunner_Scr : Enemy_Scr
 {
+    private static List<Transform> railgunners = new List<Transform>();
+
     [SerializeField] private float yPosition;
     private Transform playerTrans;
 
@@ -21,6 +23,7 @@ public class Enemy_Railgunner_Scr : Enemy_Scr
 
     protected override void Awake()
     {
+        railgunners.Add(transform);
         curHealth = maxHealth;
         lastShotTime = Time.time + 3f;
     }
@@ -53,7 +56,7 @@ public class Enemy_Railgunner_Scr : Enemy_Scr
     private float CalculateAdjustDistance(float avoidanceDistance)
     {
         float totalAdjustDistance = 0f;
-        foreach (Transform railgunner in Enemy_Director_Scr.railgunEnemiesList)
+        foreach (Transform railgunner in railgunners)
         {
             if (railgunner == null || railgunner == transform)
                 continue;
@@ -106,7 +109,7 @@ public class Enemy_Railgunner_Scr : Enemy_Scr
 
     protected override void Die()
     {
-        Enemy_Director_Scr.railgunEnemiesList.Remove(transform);
+        railgunners.Remove(transform);
         base.Die();
     }
 }

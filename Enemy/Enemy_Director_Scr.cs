@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -8,26 +9,14 @@ public class Enemy_Director_Scr : MonoBehaviour
 {
     public static Enemy_Director_Scr instance;
 
+    [SerializeField] private List<EnemyWave_SO> wavesSOs = new List<EnemyWave_SO>();
+    [SerializeField] private List<int> spawnedEnemiesByType = new List<int>();
+    private int currentWave = 0;
+    private float nextWaveIn = 0;
 
-    [SerializeField] private GameObject basicEnemyPrefab;
-    [SerializeField] private GameObject arcEnemyPrefab;
-    [SerializeField] private GameObject railgunEnemyPrefab;
-    public static List<Transform> railgunEnemiesList = new List<Transform>();
+    private float upperPoint = 0; private float leftmostPoint = 0;
 
-    [SerializeField] private float enemySpawnDelay = 1f;
-    //private float lastTimeEnemySpawned = -1f;
-
-    [SerializeField] private float waveTime = 120f;
-    [SerializeField] private int waveNum = 0;
-    private int numberOfArcsInSquad = 4;
-    private bool spawnArcsFromLeft = true;
-
-    private int screenWidth, screenHeight;
-    private float leftmostPoint, rightmostPoint, upperPoint;
-
-
-    //TODO: сделать SO уровня, который будет контролировать спавн врагов
-
+    CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
     private void Awake()
     {
@@ -36,23 +25,18 @@ public class Enemy_Director_Scr : MonoBehaviour
         else
             Destroy(gameObject);
 
-        screenHeight = Camera.main.pixelHeight + 100;
-        screenWidth = Camera.main.pixelWidth - 100;
+        upperPoint = Camera.main.GetUpperLeftCorner().y;
+        leftmostPoint = Camera.main.GetUpperLeftCorner().x;
 
-        float cameraZPos = Camera.main.transform.position.z;
-        leftmostPoint = Camera.main.ScreenToWorldPoint(new Vector3(100, screenHeight, -cameraZPos)).x;
-        rightmostPoint = Camera.main.ScreenToWorldPoint(new Vector3(screenWidth, screenWidth, -cameraZPos)).x;
-        upperPoint = Camera.main.ScreenToWorldPoint(new Vector3(100, screenHeight, -cameraZPos)).y;
+        nextWaveIn = 0;
+        foreach (GameObject enemy in wavesSOs[currentWave].enemiesList)
+            spawnedEnemiesByType.Add(0);
 
         _ = SpawnEnemiesOnTime();
     }
 
-
-    private async Task SpawnEnemiesOnTime ()
+    private async Task SpawnEnemiesOnTime() //TODO: придумать как не крутить по всему списку каждый кадр
     {
-        float timeRateIncrDelay = 10f;
-        float lastTimeRateIncr = timeRateIncrDelay;
-
         while (true)
         {
             if (destroyCancellationToken.IsCancellationRequested)
@@ -62,62 +46,71 @@ public class Enemy_Director_Scr : MonoBehaviour
 
             if (Time.timeScale != 0)
             {
-                if (lastTimeRateIncr <= Time.time)
+                if (Time.time > nextWaveIn)
                 {
-                    enemySpawnDelay *= 0.99f;
-                    lastTimeRateIncr = Time.time + timeRateIncrDelay;
-                }
+                    cancellationTokenSource.Cancel();
+                    cancellationTokenSource = new CancellationTokenSource();
 
-                waveNum = (int)(Time.time / waveTime);
-                if (waveNum % 2 == 0)
-                {
-                    if (Random.Range(0,100) < 40)
+                    for (int i = 0; i < wavesSOs[currentWave].enemiesList.Count; i++)
                     {
-                        railgunEnemiesList.Add(SpawnRandomOnLane(railgunEnemyPrefab).transform);
+                        _ = SpawnEnemy(
+                            wavesSOs[currentWave].enemiesList[i], 
+                            wavesSOs[currentWave].totalEnemies[i], 
+                            wavesSOs[currentWave].spawnMethod[i], 
+                            wavesSOs[currentWave].spawnDelay[i], 
+                            cancellationTokenSource.Token);
                     }
 
-                    SpawnBasicEnemy();
-                    await Task.Delay((int)(1000 * enemySpawnDelay));
+                    nextWaveIn += wavesSOs[currentWave].waveDuration;
+                    currentWave++;
                 }
-                else
-                {
-                    await SpawnArcSquad();
-                    await Task.Delay((int)(2000 * enemySpawnDelay));
-                }
-
-            } else
+                await Task.Yield();
+            }
+            else
             {
                 await Task.Yield();
             }
-
         }
-
-
     }
 
-
-
-    private void SpawnBasicEnemy()
+    private async Task SpawnEnemy(GameObject enemyPrefab, int totalEnemies, EnemyWave_SO.SpawnMethod spawnMethod, float spawnDelay, CancellationToken ct)
     {
-        SpawnRandomOnLane(basicEnemyPrefab);
-    }
-    private async Task SpawnArcSquad()
-    {
-        for (int i = 0; i < numberOfArcsInSquad; i++)
+        int enemiesSpawned = 0;
+        while (true)
         {
-            if (destroyCancellationToken.IsCancellationRequested)
+            if (destroyCancellationToken.IsCancellationRequested || ct.IsCancellationRequested)
             {
                 return;
             }
 
-            Enemy_ArcMoving_Scr arcEnemy = SpawnOnUpperCorner(arcEnemyPrefab, spawnArcsFromLeft).GetComponent<Enemy_ArcMoving_Scr>();
-            arcEnemy.moveToRight = !spawnArcsFromLeft;
-
-            await Task.Delay(400);
+            if (Time.timeScale != 0)
+            {
+                if (enemiesSpawned < totalEnemies)
+                    SpawnEnemyByMethod(enemyPrefab, spawnMethod);
+                await Task.Delay((int)(1000 * spawnDelay));
+            }
+            else
+            {
+                await Task.Yield();
+            }
         }
-        spawnArcsFromLeft = !spawnArcsFromLeft;
     }
-
+    private void SpawnEnemyByMethod(GameObject enemyPrefab, EnemyWave_SO.SpawnMethod spawnMethod)
+    {
+        switch (spawnMethod)
+        {
+            case EnemyWave_SO.SpawnMethod.OnLine:
+                {
+                    SpawnRandomOnLane(enemyPrefab);
+                    break;
+                }
+            case EnemyWave_SO.SpawnMethod.Corners:
+                {
+                    SpawnOnUpperCorner(enemyPrefab, true);
+                    break;
+                }
+        }
+    }
     private GameObject SpawnRandomOnLane(GameObject enemyPrefab)
     {
         //return Instantiate(enemyPrefab, new Vector3(Random.Range(leftmostPoint, rightmostPoint), upperPoint, 0), Quaternion.identity);
@@ -130,5 +123,131 @@ public class Enemy_Director_Scr : MonoBehaviour
         else
             return Instantiate(enemyPrefab, new Vector3(leftmostPoint, upperPoint, 0), Quaternion.identity);
     }
+
+    /*    //// OLD VERSION
+        public static Enemy_Director_Scr instance;
+
+
+        [SerializeField] private GameObject basicEnemyPrefab;
+        [SerializeField] private GameObject arcEnemyPrefab;
+        [SerializeField] private GameObject railgunEnemyPrefab;
+        public static List<Transform> railgunEnemiesList = new List<Transform>();
+
+        [SerializeField] private float enemySpawnDelay = 1f;
+        //private float lastTimeEnemySpawned = -1f;
+
+        [SerializeField] private float waveTime = 120f;
+        [SerializeField] private int waveNum = 0;
+        private int numberOfArcsInSquad = 4;
+        private bool spawnArcsFromLeft = true;
+
+        private int screenWidth, screenHeight;
+        private float leftmostPoint, rightmostPoint, upperPoint;
+
+
+        //TODO: сделать SO уровня, который будет контролировать спавн врагов
+
+
+        private void Awake()
+        {
+            if (instance == null)
+                instance = this;
+            else
+                Destroy(gameObject);
+
+            screenHeight = Camera.main.pixelHeight + 100;
+            screenWidth = Camera.main.pixelWidth - 100;
+
+            float cameraZPos = Camera.main.transform.position.z;
+            leftmostPoint = Camera.main.ScreenToWorldPoint(new Vector3(100, screenHeight, -cameraZPos)).x;
+            rightmostPoint = Camera.main.ScreenToWorldPoint(new Vector3(screenWidth, screenWidth, -cameraZPos)).x;
+            upperPoint = Camera.main.ScreenToWorldPoint(new Vector3(100, screenHeight, -cameraZPos)).y;
+
+            _ = SpawnEnemiesOnTime();
+        }
+
+
+        private async Task SpawnEnemiesOnTime ()
+        {
+            float timeRateIncrDelay = 10f;
+            float lastTimeRateIncr = timeRateIncrDelay;
+
+            while (true)
+            {
+                if (destroyCancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                if (Time.timeScale != 0)
+                {
+                    if (lastTimeRateIncr <= Time.time)
+                    {
+                        enemySpawnDelay *= 0.99f;
+                        lastTimeRateIncr = Time.time + timeRateIncrDelay;
+                    }
+
+                    waveNum = (int)(Time.time / waveTime);
+                    if (waveNum % 2 == 0)
+                    {
+                        if (Random.Range(0,100) < 40)
+                        {
+                            railgunEnemiesList.Add(SpawnRandomOnLane(railgunEnemyPrefab).transform);
+                        }
+
+                        SpawnBasicEnemy();
+                        await Task.Delay((int)(1000 * enemySpawnDelay));
+                    }
+                    else
+                    {
+                        await SpawnArcSquad();
+                        await Task.Delay((int)(2000 * enemySpawnDelay));
+                    }
+
+                } else
+                {
+                    await Task.Yield();
+                }
+
+            }
+
+
+        }
+
+
+
+        private void SpawnBasicEnemy()
+        {
+            SpawnRandomOnLane(basicEnemyPrefab);
+        }
+        private async Task SpawnArcSquad()
+        {
+            for (int i = 0; i < numberOfArcsInSquad; i++)
+            {
+                if (destroyCancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                Enemy_ArcMoving_Scr arcEnemy = SpawnOnUpperCorner(arcEnemyPrefab, spawnArcsFromLeft).GetComponent<Enemy_ArcMoving_Scr>();
+                arcEnemy.moveToRight = !spawnArcsFromLeft;
+
+                await Task.Delay(400);
+            }
+            spawnArcsFromLeft = !spawnArcsFromLeft;
+        }
+
+        private GameObject SpawnRandomOnLane(GameObject enemyPrefab)
+        {
+            //return Instantiate(enemyPrefab, new Vector3(Random.Range(leftmostPoint, rightmostPoint), upperPoint, 0), Quaternion.identity);
+            return Instantiate(enemyPrefab, Camera.main.GetRandomPointOnHorizontalLine(50, Camera.main.pixelWidth + 100), Quaternion.identity);
+        }
+        private GameObject SpawnOnUpperCorner(GameObject enemyPrefab, bool spawnFromRightCorner)
+        {
+            if (spawnFromRightCorner)
+                return Instantiate(enemyPrefab, new Vector3(-leftmostPoint, upperPoint, 0), Quaternion.identity);
+            else
+                return Instantiate(enemyPrefab, new Vector3(leftmostPoint, upperPoint, 0), Quaternion.identity);
+        }*/
 
 }

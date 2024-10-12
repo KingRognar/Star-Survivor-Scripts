@@ -112,7 +112,7 @@ public class Weapon_SnakeDrone_Scr : MonoBehaviour
         }
     }
 
-
+    #region Upgrade Methods
     public void AddTailSegments()
     {
         GameObject newTailSegment = Instantiate(tailSegmentPrefab, tailTransforms[tailTransforms.Count - 1].position, Quaternion.identity);
@@ -122,4 +122,5 @@ public class Weapon_SnakeDrone_Scr : MonoBehaviour
         newTailSegment.transform.localScale = tailTransforms[tailTransforms.Count - 1].localScale;
         tailTransforms.Add(newTailSegment.transform);
     }
+    #endregion
 }

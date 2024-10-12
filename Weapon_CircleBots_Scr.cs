@@ -51,7 +51,7 @@ public class Weapon_CircleBots_Scr : Weapon_Scr
     }
 
 
-    //// Upgrade Methods
+    #region Upgrade Methods
     public void AddBots(float numOfBotsToAdd)
     {
         for (int i = 0; i < numOfBotsToAdd; i++)
@@ -74,4 +74,5 @@ public class Weapon_CircleBots_Scr : Weapon_Scr
     {
         Player_Stats_Scr.CircleBots.bulletSpawnDelay -= delayDecrease;
     }
+    #endregion
 }

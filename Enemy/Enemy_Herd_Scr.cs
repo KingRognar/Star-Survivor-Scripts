@@ -4,12 +4,6 @@ using UnityEngine;
 
 public class Enemy_Herd_Scr : Enemy_Scr
 {
-    protected override void Awake()
-    {
-        curHealth = maxHealth;
-        //base.Awake();
-    }
-
     protected override void EnemyMovement()
     {
         //base.EnemyMovement();

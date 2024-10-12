@@ -114,7 +114,7 @@ public class Gun_ChainLightning_Scr : Weapon_Scr
     }
 
 
-    //// Upgrade Methods
+    #region Upgrade Methods
     public void IncreaseChainDistance(float distanceIncrease)
     {
         Player_Stats_Scr.ChainLightningGun.chainDistance += distanceIncrease;
@@ -127,4 +127,5 @@ public class Gun_ChainLightning_Scr : Weapon_Scr
     {
         Player_Stats_Scr.ChainLightningGun.damageMultiplier += multiplierIncrease;
     }
+    #endregion
 }

@@ -23,8 +23,8 @@ public class Enemy_Railgunner_Scr : Enemy_Scr
 
     protected override void Awake()
     {
+        base.Awake();
         railgunners.Add(transform);
-        curHealth = maxHealth;
         lastShotTime = Time.time + 3f;
     }
     private void Start()

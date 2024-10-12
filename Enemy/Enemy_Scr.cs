@@ -6,6 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(Enemy_HitEffect_Scr))]
 public class Enemy_Scr : MonoBehaviour
 {
+    public int EnemyId;
     public float movementSpeed = 2f;
     public float maxHealth = 10f;
     protected float curHealth;
@@ -16,7 +17,8 @@ public class Enemy_Scr : MonoBehaviour
     protected virtual void Awake()
     {
         curHealth = maxHealth;
-        Destroy(gameObject, 15f);
+        AddCountToDirector(EnemyId);
+        //Destroy(gameObject, 15f);
     }
     private void Update()
     {
@@ -34,6 +36,7 @@ public class Enemy_Scr : MonoBehaviour
         TakeDamage(Player_Stats_Scr.Machinegun.damage, collision.transform.position); // TODO: изменить в зависимости от снар€да
     }
 
+    #region Enemy Behaviour
     /// <summary>
     /// ћетод дл€ получени€ врагом урона
     /// </summary>
@@ -64,6 +67,7 @@ public class Enemy_Scr : MonoBehaviour
     /// </summary>
     protected void Disappear()
     {
+        SubCountToDirector(EnemyId);
         Destroy(gameObject);
     }
     /// <summary>
@@ -74,7 +78,6 @@ public class Enemy_Scr : MonoBehaviour
     {
         transform.position += Vector3.up * ((float)damage / maxHealth);
     }
-
     /// <summary>
     /// ћетод, выполн€ющий передвижени€ врага
     /// </summary>
@@ -85,6 +88,19 @@ public class Enemy_Scr : MonoBehaviour
     protected virtual void EnemyAttack()
     {
 
+    }
+    #endregion
+
+    protected void AddCountToDirector(int id)
+    {
+        if (Enemy_Director_Scr.enemyCountByID.ContainsKey(id))
+            Enemy_Director_Scr.enemyCountByID[id]++;
+        else
+            Enemy_Director_Scr.enemyCountByID.Add(id, 1);
+    }
+    protected void SubCountToDirector(int id)
+    {
+        Enemy_Director_Scr.enemyCountByID[id]--;
     }
 
     private void OnBecameVisible()

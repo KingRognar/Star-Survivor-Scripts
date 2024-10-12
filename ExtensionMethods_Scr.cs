@@ -4,6 +4,7 @@ using UnityEngine;
 
 public static class ExtensionMethods_Scr
 {
+    #region Random Points On Screen
     public static Vector3 GetRandomPointFromScreen(this Camera camera, int widthPadding, int heightPadding)
     {
         int screenWidth = camera.pixelWidth;
@@ -21,12 +22,16 @@ public static class ExtensionMethods_Scr
             Random.Range(0 + widthPadding, screenWidth - widthPadding),
             lineHeight, -camera.transform.position.z));
     }
+    #endregion
 
+    #region Camera Demensions In World
     public static float GetHeightInWorld(this Camera camera)
     {
         return camera.ScreenToViewportPoint(new Vector3(0, camera.pixelHeight, -camera.transform.position.z)).y;
     }
+    #endregion
 
+    #region Camera Corners In World
     public static Vector3 GetUpperLeftCorner(this Camera camera)
     {
         return camera.ScreenToViewportPoint(new Vector3(0, camera.pixelHeight, -camera.transform.position.z));
@@ -35,4 +40,5 @@ public static class ExtensionMethods_Scr
     {
         return camera.ScreenToViewportPoint(new Vector3(0, 0, -camera.transform.position.z));
     }
+    #endregion
 }

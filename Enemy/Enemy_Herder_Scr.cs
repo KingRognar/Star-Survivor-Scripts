@@ -15,11 +15,7 @@ public class Enemy_Herder_Scr : Enemy_Scr
     [SerializeField] private float attackDelay = 0.45f; private float nextAttackTime = 0;
     private Vector3 positionToMove, oldPosition;
 
-    protected override void Awake()
-    {
-        curHealth = maxHealth;
-        //base.Awake();
-    }
+
     private void Start()
     {
         GetChildrenTransforms();
@@ -50,6 +46,8 @@ public class Enemy_Herder_Scr : Enemy_Scr
 
         foreach (Transform herd in herdTransforms)
         {
+            if (herd == null)
+                continue;
             Transform newBullet = Instantiate(bulletPrefab, herd.position, herd.rotation).transform;
         }
 
@@ -66,10 +64,13 @@ public class Enemy_Herder_Scr : Enemy_Scr
         positionToMove = Camera.main.GetRandomPointFromScreen(50, 50);
         oldPosition = transform.position;
     }
+    #region Herd Behaviour
     private void MoveHerdToNewPositions()
     {
         for (int i = 0; i < herdTransforms.Count; i++)
         {
+            if (herdTransforms[i] == null)
+                continue;
             herdTransforms[i].localPosition = Vector3.Lerp(herdPrevPositions[i], herdLocalPositions[i], (Time.time - startTime) / timeToMove);
             herdTransforms[i].rotation = Quaternion.FromToRotation(Vector3.up, herdTransforms[i].position - transform.position);
         }
@@ -147,4 +148,5 @@ public class Enemy_Herder_Scr : Enemy_Scr
             herdTransforms.Add(rotorTransform.GetChild(i));
         }
     }
+    #endregion
 }

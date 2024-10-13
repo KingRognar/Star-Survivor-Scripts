@@ -16,4 +16,9 @@ public class Enemy_BaseProj_Scr : MonoBehaviour
     {
         transform.position += transform.up * projMovementSpeed * Time.deltaTime;
     }
+
+    private void OnBecameInvisible()
+    {
+        Destroy(gameObject);
+    }
 }

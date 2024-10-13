@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Unity.Burst.CompilerServices;
 using UnityEngine;
@@ -88,10 +89,16 @@ public class Gun_ChainLightning_Scr : Weapon_Scr
         {
             await ChainVisuals(projLineRenderer, transform.position, transform.position + Vector3.up * 10);           
         }
+        if (destroyCancellationToken.IsCancellationRequested)
+            return;
         Destroy(newProj);
     }
     private async Task ChainVisuals(LineRenderer lineRenderer, Vector3 chainBeginigPoint, Vector3 chainEndPoint)
     {
+        if (destroyCancellationToken.IsCancellationRequested)
+        {
+            return;
+        }
         lineRenderer.SetPosition(0, transform.InverseTransformPoint(chainBeginigPoint));
         lineRenderer.SetPosition(1, transform.InverseTransformPoint(chainEndPoint));
         await FadeChain(lineRenderer.material);

@@ -4,10 +4,16 @@ using UnityEngine;
 
 public class Player_Movement_Scr : MonoBehaviour
 {
+    private float nextTime = 0f;
 
 
     void Update()
     {
+        if ( nextTime <= Time.time)
+        {
+            Debug.Log(Time.time);
+            nextTime += 1;
+        }
         MovePlayerToMousePosition();
     }
 

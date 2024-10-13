@@ -69,7 +69,10 @@ public class UpgradeSystem_Scr : MonoBehaviour
     private void OpenLvlUpMenu()
     {
         if (upgradesList.Count == 0)
+        {
             CloseLvlUpMenu();
+            return;
+        }
 
         Time.timeScale = 0;
         levelUpMenu.SetActive(true);
@@ -79,23 +82,29 @@ public class UpgradeSystem_Scr : MonoBehaviour
         if (upgradesList.Count < 3)
             cnt = upgradesList.Count;
 
-        List<GenericUpgrade_SO> selectUpgrades = SelectSample(upgradesList, cnt);
-        int i = 0;
-        while (i < 3)
+        try
         {
-            if (i + 1 > cnt)
+            List<GenericUpgrade_SO> selectUpgrades = SelectSample(upgradesList, cnt);
+            int i = 0;
+            while (i < cnt)
+            {
+                //int num = UnityEngine.Random.Range(0, upgradesList.Count);
+                UIlvlUpOptions[i].gameObject.SetActive(true);
+                UIlvlUpOptions[i].upgrade_SO = selectUpgrades[i];
+                UIlvlUpOptions[i].UpdateVisuals();
+
+
+                i++;
+            }
+            while (i < 3)
             {
                 UIlvlUpOptions[i].gameObject.SetActive(false);
-                continue;
+                i++;
             }
-
-            //int num = UnityEngine.Random.Range(0, upgradesList.Count);
-            UIlvlUpOptions[i].gameObject.SetActive(true);
-            UIlvlUpOptions[i].upgrade_SO = selectUpgrades[i];
-            UIlvlUpOptions[i].UpdateVisuals();
-
-
-            i++;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex, this);
         }
     }
     /// <summary>

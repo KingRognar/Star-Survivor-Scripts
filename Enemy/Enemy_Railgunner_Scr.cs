@@ -29,7 +29,7 @@ public class Enemy_Railgunner_Scr : Enemy_Scr
     }
     private void Start()
     {
-        playerTrans = Player_Stats_Scr.instance.transform;
+        playerTrans = Player_Stats_Scr.instance != null ? Player_Stats_Scr.instance.transform : null;
         railSpawnPoint1 = transform.GetChild(0);
         railSpawnPoint2 = transform.GetChild(1);
     }

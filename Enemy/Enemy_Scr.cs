@@ -12,8 +12,6 @@ public class Enemy_Scr : MonoBehaviour
     protected float curHealth;
     public int expAward = 2;
 
-    private bool becameVisible = false;
-
     protected virtual void Awake()
     {
         curHealth = maxHealth;
@@ -36,7 +34,7 @@ public class Enemy_Scr : MonoBehaviour
         TakeDamage(Player_Stats_Scr.Machinegun.damage, collision.transform.position); // TODO: изменить в зависимости от снаряда
     }
 
-    #region Enemy Behaviour
+    #region ----Enemy Behaviour
     /// <summary>
     /// Метод для получения врагом урона
     /// </summary>
@@ -84,6 +82,8 @@ public class Enemy_Scr : MonoBehaviour
     protected virtual void EnemyMovement()
     {
         transform.position += -transform.up * Time.deltaTime * movementSpeed;
+        if (transform.position.y <= -7)
+            Disappear();
     }
     protected virtual void EnemyAttack()
     {
@@ -94,23 +94,21 @@ public class Enemy_Scr : MonoBehaviour
     protected void AddCountToDirector(int id)
     {
         if (Enemy_Director_Scr.enemyCountByID.ContainsKey(id))
+        {
             Enemy_Director_Scr.enemyCountByID[id]++;
+            Test_EnemyNumber_scr.instance.UpdateLine(id, Enemy_Director_Scr.enemyCountByID[id]);
+        }
         else
+        {
             Enemy_Director_Scr.enemyCountByID.Add(id, 1);
+            Test_EnemyNumber_scr.instance.AddNewLine(id, Enemy_Director_Scr.enemyCountByID[id]);
+        }
     }
     protected void SubCountToDirector(int id)
     {
+        if (Enemy_Director_Scr.enemyCountByID[id] <= 0)
+            return;
         Enemy_Director_Scr.enemyCountByID[id]--;
+        Test_EnemyNumber_scr.instance.UpdateLine(id, Enemy_Director_Scr.enemyCountByID[id]);
     }
-
-    private void OnBecameVisible()
-    {
-        becameVisible = true;
-    }
-    private void OnBecameInvisible()
-    {
-        if (becameVisible == true)
-            Disappear();
-    }
-
 }

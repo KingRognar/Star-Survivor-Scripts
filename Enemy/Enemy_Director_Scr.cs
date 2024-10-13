@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Enemy_Director_Scr : MonoBehaviour
@@ -17,9 +18,7 @@ public class Enemy_Director_Scr : MonoBehaviour
 
     private float upperPoint = 0; private float leftmostPoint = 0;
 
-    CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-
-    private void Awake()
+    private async void Awake()
     {
         if (instance == null)
             instance = this;
@@ -30,8 +29,6 @@ public class Enemy_Director_Scr : MonoBehaviour
         leftmostPoint = Camera.main.GetUpperLeftCorner().x;
 
         nextWaveIn = 0;
-        /*foreach (GameObject enemy in wavesSOs[currentWave].enemiesList)
-            spawnedEnemiesByType.Add(0);*/
 
         _ = SpawnEnemiesOnTime();
     }
@@ -40,71 +37,90 @@ public class Enemy_Director_Scr : MonoBehaviour
     {
         while (true)
         {
-            if (destroyCancellationToken.IsCancellationRequested)
+            try
             {
-                return;
-            }
-
-            if (Time.timeScale != 0)
-            {
-                if (Time.time > nextWaveIn)
+                if (destroyCancellationToken.IsCancellationRequested)
                 {
-                    Debug.Log("Started wave " + currentWave);
-                    cancellationTokenSource.Cancel();
-                    cancellationTokenSource = new CancellationTokenSource();
-
-                    for (int i = 0; i < wavesSOs[currentWave].enemiesList.Count; i++)
-                    {
-                        _ = SpawnEnemy(
-                            wavesSOs[currentWave].enemiesList[i], 
-                            wavesSOs[currentWave].totalEnemies[i], 
-                            wavesSOs[currentWave].spawnMethod[i], 
-                            wavesSOs[currentWave].spawnDelay[i], 
-                            cancellationTokenSource.Token);
-                    }
-
-                    nextWaveIn += wavesSOs[currentWave].waveDuration;
-                    currentWave++;
+                    return;
                 }
-                await Task.Yield();
+
+                if (Time.timeScale != 0)
+                {
+                    if (Time.time > nextWaveIn)
+                    {
+                        Debug.Log("Started wave " + currentWave);
+
+                        if (currentWave >= wavesSOs.Count)
+                        {
+                            Debug.Log("Waves are ended");
+                            return;
+                        }
+
+                        for (int i = 0; i < wavesSOs[currentWave].enemiesList.Count; i++)
+                        {
+                            _ = SpawnEnemy(
+                                wavesSOs[currentWave].enemiesList[i], 
+                                wavesSOs[currentWave].totalEnemies[i], 
+                                wavesSOs[currentWave].spawnMethod[i], 
+                                wavesSOs[currentWave].spawnDelay[i],
+                                wavesSOs[currentWave].waveDuration);
+                        }
+
+                        nextWaveIn += wavesSOs[currentWave].waveDuration;
+                        currentWave++;
+                    }
+                }
             }
-            else
+            catch (Exception ex)
             {
-                await Task.Yield();
+                Debug.LogException(ex, this);
             }
+            await Task.Yield();
         }
     }
 
-    private async Task SpawnEnemy(GameObject enemyPrefab, int totalEnemies, EnemyWave_SO.SpawnMethod spawnMethod, float spawnDelay, CancellationToken ct)
+    private async Task SpawnEnemy(GameObject enemyPrefab, int totalEnemies, EnemyWave_SO.SpawnMethod spawnMethod, float spawnDelay, float waveDuration)
     {
         int enemyID = enemyPrefab.GetComponent<Enemy_Scr>().EnemyId;
-        while (true)
+        float endTime = Time.time + waveDuration;
+        float nextSpawnTime = Time.time;
+        while (Time.time < endTime)
         {
-            if (destroyCancellationToken.IsCancellationRequested || ct.IsCancellationRequested)
+            try
             {
-                return;
-            }
-
-            if (Time.timeScale != 0)
-            {
-                if (enemyCountByID.ContainsKey(enemyID))
+                if (destroyCancellationToken.IsCancellationRequested)
                 {
-                    if (enemyCountByID[enemyID] < totalEnemies)
-                        SpawnEnemyByMethod(enemyPrefab, spawnMethod);
+                    return;
                 }
-                else
-                    SpawnEnemyByMethod(enemyPrefab, spawnMethod);
 
-
-                await Task.Delay((int)(1000 * spawnDelay));
+                if (Time.timeScale != 0)
+                {
+                    if (Time.time >= nextSpawnTime)
+                    {
+                        if (enemyCountByID.ContainsKey(enemyID))
+                        {
+                            if (enemyCountByID[enemyID] < totalEnemies)
+                            {
+                                SpawnEnemyByMethod(enemyPrefab, spawnMethod);
+                                nextSpawnTime = Time.time + spawnDelay;
+                            }
+                        }
+                        else
+                        {
+                            SpawnEnemyByMethod(enemyPrefab, spawnMethod);
+                            nextSpawnTime = Time.time + spawnDelay;
+                        }
+                    }
+                }
             }
-            else
+            catch (Exception ex)
             {
-                await Task.Yield();
+                Debug.LogException(ex, this);
             }
+            await Task.Yield();
         }
     }
-    #region Spawn Methods
+    #region ----Spawn Methods
     private void SpawnEnemyByMethod(GameObject enemyPrefab, EnemyWave_SO.SpawnMethod spawnMethod)
     {
         switch (spawnMethod)
@@ -134,6 +150,7 @@ public class Enemy_Director_Scr : MonoBehaviour
             return Instantiate(enemyPrefab, new Vector3(leftmostPoint, upperPoint, 0), Quaternion.identity);
     }
     #endregion
+
 
     /*    //// OLD VERSION
         public static Enemy_Director_Scr instance;

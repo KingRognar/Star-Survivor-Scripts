@@ -20,22 +20,28 @@ public class ParallaxManager_Scr : MonoBehaviour
     {
         while (true)
         {
-            if (destroyCancellationToken.IsCancellationRequested)
+            try
             {
-                return;
-            }
+                if (destroyCancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
 
-            if (Time.timeScale != 0)
-            {
-                int rnd = UnityEngine.Random.Range(0, HLScenePrefabs.Count);
-                Instantiate(HLScenePrefabs[rnd], new Vector3(0, 15, 0), Quaternion.identity);
-                await Task.Delay((int)timeToSpawn * 1000);
+                if (Time.timeScale != 0)
+                {
+                    int rnd = UnityEngine.Random.Range(0, HLScenePrefabs.Count);
+                    Instantiate(HLScenePrefabs[rnd], new Vector3(0, 15, 0), Quaternion.identity);
+                    await Task.Delay((int)timeToSpawn * 1000);
+                }
+                else
+                {
+                    await Task.Yield();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                await Task.Yield();
+                Debug.LogException(ex, this);
             }
-
         }
     }
 }

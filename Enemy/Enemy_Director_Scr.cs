@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Enemy_Director_Scr : MonoBehaviour
@@ -18,7 +17,7 @@ public class Enemy_Director_Scr : MonoBehaviour
 
     private float upperPoint = 0; private float leftmostPoint = 0;
 
-    private async void Awake()
+    private void Awake()
     {
         if (instance == null)
             instance = this;
@@ -37,43 +36,36 @@ public class Enemy_Director_Scr : MonoBehaviour
     {
         while (true)
         {
-            try
+            if (destroyCancellationToken.IsCancellationRequested)
             {
-                if (destroyCancellationToken.IsCancellationRequested)
-                {
-                    return;
-                }
-
-                if (Time.timeScale != 0)
-                {
-                    if (Time.time > nextWaveIn)
-                    {
-                        Debug.Log("Started wave " + currentWave);
-
-                        if (currentWave >= wavesSOs.Count)
-                        {
-                            Debug.Log("Waves are ended");
-                            return;
-                        }
-
-                        for (int i = 0; i < wavesSOs[currentWave].enemiesList.Count; i++)
-                        {
-                            _ = SpawnEnemy(
-                                wavesSOs[currentWave].enemiesList[i], 
-                                wavesSOs[currentWave].totalEnemies[i], 
-                                wavesSOs[currentWave].spawnMethod[i], 
-                                wavesSOs[currentWave].spawnDelay[i],
-                                wavesSOs[currentWave].waveDuration);
-                        }
-
-                        nextWaveIn += wavesSOs[currentWave].waveDuration;
-                        currentWave++;
-                    }
-                }
+                return;
             }
-            catch (Exception ex)
+
+            if (Time.timeScale != 0)
             {
-                Debug.LogException(ex, this);
+                if (Time.time > nextWaveIn)
+                {
+                    Debug.Log("Started wave " + currentWave);
+
+                    if (currentWave >= wavesSOs.Count)
+                    {
+                        Debug.Log("Waves are ended");
+                        return;
+                    }
+
+                    for (int i = 0; i < wavesSOs[currentWave].enemiesList.Count; i++)
+                    {
+                        _ = SpawnEnemy(
+                            wavesSOs[currentWave].enemiesList[i], 
+                            wavesSOs[currentWave].totalEnemies[i], 
+                            wavesSOs[currentWave].spawnMethod[i], 
+                            wavesSOs[currentWave].spawnDelay[i],
+                            wavesSOs[currentWave].waveDuration);
+                    }
+
+                    nextWaveIn += wavesSOs[currentWave].waveDuration;
+                    currentWave++;
+                }
             }
             await Task.Yield();
         }
@@ -86,41 +78,39 @@ public class Enemy_Director_Scr : MonoBehaviour
         float nextSpawnTime = Time.time;
         while (Time.time < endTime)
         {
-            try
+            if (destroyCancellationToken.IsCancellationRequested)
             {
-                if (destroyCancellationToken.IsCancellationRequested)
-                {
-                    return;
-                }
+                return;
+            }
 
-                if (Time.timeScale != 0)
+            if (Time.timeScale != 0)
+            {
+                if (Time.time >= nextSpawnTime)
                 {
-                    if (Time.time >= nextSpawnTime)
+                    if (enemyCountByID.ContainsKey(enemyID))
                     {
-                        if (enemyCountByID.ContainsKey(enemyID))
-                        {
-                            if (enemyCountByID[enemyID] < totalEnemies)
-                            {
-                                SpawnEnemyByMethod(enemyPrefab, spawnMethod);
-                                nextSpawnTime = Time.time + spawnDelay;
-                            }
-                        }
-                        else
+                        if (enemyCountByID[enemyID] < totalEnemies)
                         {
                             SpawnEnemyByMethod(enemyPrefab, spawnMethod);
                             nextSpawnTime = Time.time + spawnDelay;
                         }
                     }
+                    else
+                    {
+                        SpawnEnemyByMethod(enemyPrefab, spawnMethod);
+                        nextSpawnTime = Time.time + spawnDelay;
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                Debug.LogException(ex, this);
             }
             await Task.Yield();
         }
     }
     #region ----Spawn Methods
+    /// <summary>
+    /// Метод позволяющий выбрать способ спавна врага
+    /// </summary>
+    /// <param name="enemyPrefab">Префаб врага</param>
+    /// <param name="spawnMethod">Enum способа спавна</param>
     private void SpawnEnemyByMethod(GameObject enemyPrefab, EnemyWave_SO.SpawnMethod spawnMethod)
     {
         switch (spawnMethod)
@@ -137,11 +127,22 @@ public class Enemy_Director_Scr : MonoBehaviour
                 }
         }
     }
+    /// <summary>
+    /// Метод для рандомного спавна врага на горизонтальной линии, находящейся за видимой областью
+    /// </summary>
+    /// <param name="enemyPrefab">Префаб врага</param>
+    /// <returns>Объект заспавненного врага</returns>
     private GameObject SpawnRandomOnLane(GameObject enemyPrefab)
     {
         //return Instantiate(enemyPrefab, new Vector3(Random.Range(leftmostPoint, rightmostPoint), upperPoint, 0), Quaternion.identity);
         return Instantiate(enemyPrefab, Camera.main.GetRandomPointOnHorizontalLine(50, Camera.main.pixelHeight), Quaternion.identity);
     }
+    /// <summary>
+    /// Метод для спавна врага в левом или правом верхнем углу
+    /// </summary>
+    /// <param name="enemyPrefab">Префаб врага</param>
+    /// <param name="spawnFromRightCorner">Спавнить врага в правом углу?</param>
+    /// <returns>Объект заспавненного врага</returns>
     private GameObject SpawnOnUpperCorner(GameObject enemyPrefab, bool spawnFromRightCorner)
     {
         if (spawnFromRightCorner)
